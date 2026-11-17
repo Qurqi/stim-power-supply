@@ -1,6 +1,7 @@
 # ±102 V supply — final parts and connections for layout
 
-Status 2026-11-15. This file consolidates decisions P-1 to P-19. It supersedes `SCHEMATIC_CHANGES_2026-11-14.md` as the list to capture from; that file keeps the history and the evidence for each value.
+Status 2026-11-16. This file consolidates decisions P-1 to P-24. It supersedes `SCHEMATIC_CHANGES_2026-11-14.md` as the list to capture from; that file keeps the history and the evidence for each value.
+The reference designators below are this file's working names; **the schematic's designators are authoritative** and section 13 maps one to the other.
 The design is verified by TI's calculator and LTspice only. Nothing here has been built.
 
 Tags: [DS] datasheet · [calc] TI calculator · [L] LTspice · [H] hand calculation · [ASSUME] assumption.
@@ -16,10 +17,10 @@ Decided 2026-11-16 (P-21 to P-24):
 | 2. Connectors to the analog board (P-22) | lay out as is; agree with the analog-board owner later | — |
 | 3. Battery side (P-23) | Rev 1 runs from a bench supply; battery connector, fuse, reverse-polarity and over-discharge protection deferred to Rev 2 | — |
 | 4. Transformer (P-24) | keep the DA2034-ALD; buy outside JLCPCB and hand-solder (gull-wing SMD leads) | **done 2026-11-16:** pinout and footprint from LCSC's EasyEDA data (primary starts 7–10 dotted, ends 3–6; secondary 1 dotted, 12; 2 and 11 not connected; pads 3.30 × 1.27 mm, 3.0 mm pitch, 26.92 mm between columns), in `pcb/lib/`. Still cross-check against Coilcraft's drawing before ordering |
-
-**Schematic (2026-11-16):** `pcb/power_supply.kicad_sch` is generated from this file by `pcb/tools/gen_schematic.py`. KiCad ERC: 0 violations. KiCad's exported netlist matches this list pin for pin (132 parts, 298 pins, 64 nets; `pcb/tools/check_netlist.py`). Pinouts checked against manufacturers: LM51551 (TI), TL431 SOT-23 cathode 1 / REF 2 / anode 3 (TI; the TL432 differs, so order TL431BIDBZR), TCMT1108 (Vishay). Every pin has a net label; tidying into wires is left for review.
 | 5. Spacing | follow JLCPCB's layout rules | see the note below |
 | 6. Aux rails (P-21) | off-the-shelf ±12 V regulator and a 5 V supply, which the analog board's J2 expects | select the parts and decide whether they sit on this board |
+
+**Schematic (2026-11-16):** `pcb/power_supply.kicad_sch` is generated from this file by `pcb/tools/gen_schematic.py`. KiCad ERC: 0 violations. KiCad's exported netlist matches this list pin for pin (132 parts, 298 pins, 64 nets; `pcb/tools/check_netlist.py`). Its component values match the final simulation netlist `sim_ladder/P9_final.net` on all 47 simulated elements (`pcb/tools/check_values.py`). Pinouts checked against manufacturers: LM51551 (TI), TL431 SOT-23 cathode 1 / REF 2 / anode 3 (TI; the TL432 differs, so order TL431BIDBZR), TCMT1108 (Vishay). Every pin has a net label; tidying into wires is left for review.
 
 Transformer sources seen 2026-11-16: LCSC C5354095, 12 in stock at $11.79, plus 864 from another supplier through LCSC (5–7 days, $6.44); an aggregator lists about 1,200 at Mouser (994-DA2034-ALD) and about 670 at Coilcraft direct, both undated. Coilcraft also offers free samples. Two per board.
 
@@ -64,7 +65,7 @@ Spacing note: JLCPCB's rules are manufacturing minimums (how close copper can be
 | Cbyp | ceramic | 220 pF | UVLO to GND | not looked up |
 | Rpullup | resistor | 5.11 kΩ, 1 % | VCC to COMP | not looked up |
 | Rcomp, Ccomp | footprints only | 249 kΩ, 4.7 nF | in series, COMP to GND; **do not fit** | — |
-| T1, T2 | Coilcraft DA2034-AL | 10 µH, 1:10, 10 A | both primaries VIN to SW; each part's two primary windings paralleled on the PCB | **not at JLCPCB**; buy separately, hand-fit or consign |
+| T1, T2 | Coilcraft DA2034-ALD | 10 µH, 1:10, 10 A | both primaries VIN to SW: each part's four primary windings paralleled on the PCB, starts (pins 7–10, dotted) to VIN, ends (pins 3–6) to SW; pins 2 and 11 not connected | **not at JLCPCB**; LCSC C5354095, Mouser, Coilcraft; hand-fit |
 | M1 | CSD19531Q5A | 100 V, 6 mΩ at 6 V | drain SW, source SNS, gate via Rgate | C2760462 |
 | Rgate | resistor | 3.3 Ω start value | GATE to M1 gate | not looked up |
 | Rsns | current-sense resistor | 6 mΩ, 1 %, 2512, **3 W** (0.24 W dissipated [L]) | SNS to GND, Kelvin sensed | **C429335**, 3,872 in stock (C76239 has only 5) |
@@ -80,7 +81,7 @@ U1 pins: BIAS to VIN · VCC to Cvcc · GATE to Rgate · CS to Rcs/Ccs · COMP to
 
 | Ref (+ / −) | Part | Value / rating | +HV connection | −HV connection | JLCPCB |
 |---|---|---|---|---|---|
-| T1 / T2 secondary | — | 1 mH nominal | one end GND, other end SEC_P | **dot end −HV_RAW**, other end SEC_N | — |
+| T1 / T2 secondary | — | 1 mH nominal | pin 1 (dot) GND, pin 12 SEC_P | **pin 1 (dot) −HV_RAW**, pin 12 SEC_N | — |
 | D1 / D2 | ES1J | 600 V, 1 A | anode SEC_P, cathode +HV_RAW | anode SEC_N, cathode GND | C86560 |
 | Rsn1 / Rsn2, Csn1 / Csn2 | diode snubber | 220 Ω + 22 pF start values; capacitor rated 630 V or more | in series across D1 | in series across D2 | not looked up; tune on the bench |
 | Co1–3 / Co4–6 | electrolytic, through-hole | 10 µF, 200 V, 8 × 12 mm, **180 mA at 100 kHz**; about 50 mA each expected [H] | +HV_RAW (+) to GND | GND (+) to −HV_RAW | **C106302**, 8,083 in stock (C112474 has more stock but no ripple rating on its page) |
@@ -148,42 +149,44 @@ Same circuit as section 5 with the differences below and **no compensation parts
 | 14.7 kΩ 1206 / 7.32 kΩ 1206 | 3 / 6 |
 | 10 µF 200 V electrolytic (through-hole) | 8 |
 | 1 µF 250 V 1812 | 4 |
-| ES1J, SMBJ130A, 100 µH inductor, ferrite bead | 2 each |
+| ES1J, SMBJ130A, 100 µH inductor, ferrite bead, BAS21 | 2 each |
 | MMBT3906 (latch + soft start) | 2 |
+| 10 µF 25 V 1206 (input) | 8 |
+| 300 Ω 2 W 2512 (clamp) | 3 |
 
 ## 9. Layout notes
 
 - **High-current loop.** Input capacitors, transformer primaries, M1 and Rsns carry 14 A pulses. Keep that loop as small as possible and Kelvin-connect Rsns to Rcs.
-- **Two primaries per transformer.** Join them on the PCB with short, equal traces; the datasheet figures assume it. Confirm the pin numbers on the datasheet drawing.
+- **Four primary windings per transformer.** Join pins 7–10 together and pins 3–6 together on the PCB with short, wide copper; the datasheet figures assume it. Confirm the pin numbers on Coilcraft's drawing.
 - **Transformer symmetry.** Route T1 and T2 to SW and VIN with equal lengths. The two transformers ring against each other through their leakage, and unequal traces add to it.
 - **Sense filter at the pin.** Place Ccs and Rcs next to U1, with Ccs returned to the controller's ground pin.
 - **Clamp heat.** Rsnub dissipates 1.3 W in simulation and may reach 4.5 W; give it copper and keep it away from the electrolytics.
-- **High-voltage spacing.** The rails are 205 V apart and the rectifier nodes ring to 390–470 V. Use at least 1.5 mm between high-voltage and low-voltage copper (the analog team's rule), more around SEC_P and SEC_N.
+- **High-voltage spacing.** Layout follows JLCPCB's rules (decided 2026-11-16). Those are manufacturing minimums; the rails are 205 V apart and the rectifier nodes ring to 390–470 V, so give SEC_P, SEC_N and the raw rails extra room where the board allows.
 - **Resistor strings.** Each three-resistor string shares about 100 V; lay them in a line so the voltage steps down along the board.
 - **Quiet nodes.** Keep the REF pins, KC nodes and LATCH_G away from SW, SEC_P and SEC_N. LATCH_G must not pick up switching noise.
 - **One ground tie.** The output return joins battery ground at one point near the supply; the channel boards return to that point.
 - **Through-hole parts.** Eight 8 × 12 mm electrolytics; the two transformers are about 30 × 25 mm and 11.4 mm tall.
-- **Test points.** +HV_RAW, −HV_RAW, +HV, −HV, SW, SNS, COMP, UVLO, LATCH_G, VCC, GND.
+- **Test points.** +HV_RAW, −HV_RAW, +HV, −HV, SW, SNS, COMP, UVLO, LATCH_G, VCC, SS, GND.
 
 ## 10. Not in this design
 
-- Battery connector, input fuse and reverse-polarity protection.
-- Output connectors to the sixteen channel boards.
+- Battery connector, input fuse and reverse-polarity protection (Rev 2, P-23; Rev 1 runs from a bench supply through placeholder J1).
+- Output connectors to the sixteen channel boards (to be agreed, P-22; placeholder J2).
 - Battery over-discharge protection: the lockout at 7.0 V does not provide it.
-- The +12 V and +5 V rails for the channel boards (an off-the-shelf regulator on the battery, P-10).
+- The ±12 V and +5 V rails for the channel boards (off-the-shelf ±12 V regulator and 5 V supply, P-21; parts not chosen).
 - An indication to the operator that the supply has tripped.
 
 ## 10b. Open design issue: start-up current (P-20)
 
 **Resolved 2026-11-16** by the primary-side soft start with Css = 680 nF (section 3; record in `sim_ladder/P9_final_RECORD.md`). The original finding follows.
 
-With no output voltage to reset the transformers, the primary current climbs past the current limit during the first milliseconds of start-up. In simulation it reaches **26 A in the switch and 12.4 / 14.6 A in the transformers**, against their 10 A rating, with the 2.2 nF sense filter [L]. With the earlier 470 pF it was 19.6 A (about 9.8 A each), but that value skips pulses in steady state. The model has no transformer saturation and assumes a 120 ns blanking time, so the real figure is uncertain in both directions. Options: an intermediate filter value, reducing the turn-on spike at its source (slower gate drive, snubbers) so a small filter suffices, or limiting current during start-up another way. **Not resolved.**
+With no output voltage to reset the transformers, the primary current climbs past the current limit during the first milliseconds of start-up. In simulation it reaches **26 A in the switch and 12.4 / 14.6 A in the transformers**, against their 10 A rating, with the 2.2 nF sense filter [L]. With the earlier 470 pF it was 19.6 A (about 9.8 A each), but that value skips pulses in steady state. The model has no transformer saturation and assumes a 120 ns blanking time, so the real figure is uncertain in both directions. The options considered were an intermediate filter value, reducing the turn-on spike at its source, or limiting current during start-up; the third was chosen.
 
 ## 11. To settle on the bench
 
 1. Switching is regular with Ccs at 2.2 nF (no skipped pulses).
 2. Trip level on each rail against the 111 V limit; latch does not fire from noise or when the battery is connected.
-3. Start-up with the controller's real soft start: no overshoot, no trip, no lockout.
+3. Start-up with the primary-side soft start (Css 680 nF): no current-limit dwell or hiccup, no overshoot, no trip, no lockout.
 4. Rectifier snubber: reverse voltage, simulated at 390–470 V.
 5. Primary clamp loss and transformer temperature at full load.
 6. Actual −HV level across load, and which rail sits low.
@@ -202,10 +205,26 @@ Read from each part's own JLCPCB page. Stock moves, so treat the counts as a sna
 | Filter inductor C83468 | saturation 1.15 A, rated 1 A, 0.29 Ω; 8,057 | confirmed |
 | Ferrite bead C16902 | 1.5 A, 80 mΩ; 12,645 | confirmed |
 | Bulk electrolytic C112474 | 57,166 in stock, no ripple rating on the page | changed to C106302 (180 mA at 100 kHz; 8,083) |
-| Polymer input capacitor | C3274630, C1020104, C2919878, C723101, C5129328 all show 0 in stock | replaced by 8 ceramics plus one 330 µF electrolytic; **not re-simulated** |
+| Polymer input capacitor | C3274630, C1020104, C2919878, C723101, C5129328 all show 0 in stock | replaced by 8 ceramics plus one 330 µF electrolytic; re-simulated 2026-11-15 (0.21 V input ripple, 0.6 A RMS per ceramic) |
 | 110 kΩ 1206 C246043 | 3 in stock | changed to C17904 (11,469) |
 | 7.32 kΩ 1206 C488946 | 10 in stock | changed to C247199 (4,878) |
 | 2.49 kΩ 0.1 % C861299, 2.32 kΩ 0.1 % C861296, 14.7 kΩ C488648, 10 µF 25 V C70462 | 7,739 / 5,277 / 3,211 / 205,388 | confirmed |
 | Clamp diode and resistor | were not chosen | SS510C (C123944) and 3 × 300 Ω 2 W (C91264) |
 
-The input capacitor change is the one electrical change here. The final simulation used 200 µF of polymer plus 24 µF of ceramic; this arrangement has about 40 µF effective of ceramic [ASSUME 50 % loss under bias] plus the electrolytic, giving roughly 0.2 V of input ripple [H].
+The input capacitor change was the one electrical change here; the final simulation now models it (40 µF effective ceramic [ASSUME 50 % loss under bias] plus the 330 µF electrolytic) and gives 0.21 V of input ripple [L].
+
+## 13. Designator map: this file to the schematic
+
+The schematic's designators are the ones to use from now on (BOM, layout, bench notes).
+
+| Block | This file | Schematic |
+|---|---|---|
+| Input, controller | Cin1 · Cin2–Cin9 · Cbias · Cvcc · Rt · Css · Qss · Rent · Renb · Cbyp · Rpullup · Rcomp, Ccomp (DNP) | C1 · C2–C9 · C10 · C11 · R1 · C12 · Q1 · R2 · R3 · C13 · R4 · R5, C14 |
+| Power stage | T1, T2 · M1 · Rgate · Rsns · Rcs · Ccs · Dsnub · Rsnub1–3 · Csnub | T1, T2 · Q2 · R6 · R7 · R8 · C15 · D1 · R9–R11 · C16 |
+| +HV output | D1 · Rsn1, Csn1 · Co1–3 · Co7 · TVS1 · Lf1 · FB1 · Cf1 · Cd1 · Rd1 | D2 · R12, C17 · C18–C20 · C21 · D3 · L1 · FB1 · C22 · C23 · R13 |
+| −HV output | D2 · Rsn2, Csn2 · Co4–6 · Co8 · TVS2 · Lf2 · FB2 · Cf2 · Cd2 · Rd2 | D4 · R14, C24 · C25–C27 · C28 · D5 · L2 · FB2 · C29 · C30 · R15 |
+| Main feedback | Rfbt1–3 · Rfbb · U2 · Q1 · Rb1–3 · Dz1 · Rled1–3 · U3 · Rsh · Rcomp1 · Ccomp1 · R21a/b · C21 · D21 · D22 | R16–R18 · R19 · U2 · Q3 · R20–R22 · D6 · R23–R25 · U3 · R26 · R27 · C31 · R28, R29 · C32 · D7 · D8 |
+| Trip +HV | divider top · bottom · filter · TL431 · MMBTA42 · bias · Zener · LED resistors · optocoupler · LED shunt | R30–R32 · R33 · C33 · U4 · Q4 · R34–R36 · D9 · R37–R39 · U5 · R40 |
+| Trip −HV | same order | R41–R43 · R44 · C34 · U6 · Q5 · R45–R47 · D10 · R48–R50 · U7 · R51 |
+| Latch | Q2 (MMBT3904) · Q3 (MMBT3906) · Rpb · Rg · Cg | Q6 · Q7 · R52 · R53 · C35 |
+| Connectors, test points | bench input · HV output · test points | J1 · J2 · TP1–TP12 |

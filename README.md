@@ -29,6 +29,8 @@ cd pcb
 python tools/gen_schematic.py      # writes power_supply.kicad_sch and the project libraries
 python tools/check_netlist.py      # exports KiCad's netlist and compares it pin by pin with the parts list
 kicad-cli sch erc power_supply.kicad_sch
+kicad-cli sch export bom --fields "Reference,Value,Footprint,LCSC,${DNP}" --labels "Ref,Value,Footprint,LCSC,DNP" --group-by "" --ref-range-delimiter "" -o tools/bom_actual.csv power_supply.kicad_sch
+python tools/check_values.py       # compares schematic values with the final simulation (sim_ladder/P9_final.net)
 ```
 
 Every pin carries a net label, so the drawing is correct but not yet tidy. Once you start editing the schematic by
