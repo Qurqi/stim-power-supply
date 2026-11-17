@@ -1,0 +1,173 @@
+LTspice 26.1.1 for Windows
+Circuit: C:\Users\Johnd\OneDrive\Desktop\power_Supply\sim_ladder\P6_rail_tracking.net
+Start Time: Sat Nov 14 15:10:02 2026
+
+.step run=1
+solver = Normal
+Maximum thread count: 8
+tnom = 27
+temp = 27
+method = trap
+Direct Newton iteration succeeded in finding operating point.
+
+.step run=2
+Direct Newton iteration succeeded in finding operating point.
+
+.step run=3
+Direct Newton iteration succeeded in finding operating point.
+
+.step run=4
+Direct Newton iteration succeeded in finding operating point.
+Total elapsed time: 721.709 seconds.
+Total iterations: 58289241
+
+Files loaded:
+C:\Users\Johnd\OneDrive\Desktop\power_Supply\sim_ladder\P6_rail_tracking.net
+
+
+Measurement: vp_idle
+  step	AVG(V(HVP))	FROM	TO
+     1	104.502154397	0.009	0.01
+     2	104.502154397	0.009	0.01
+     3	104.502154397	0.009	0.01
+     4	104.004371768	0.009	0.01
+
+Measurement: vn_idle
+  step	AVG(V(HVN))	FROM	TO
+     1	-105.885944045	0.009	0.01
+     2	-105.885944045	0.009	0.01
+     3	-105.885944045	0.009	0.01
+     4	-104.136579667	0.009	0.01
+
+Measurement: vp_pheavy
+  step	AVG(V(HVP))	FROM	TO
+     1	104.000026274	0.013	0.014
+     2	104.000041678	0.013	0.014
+     3	90.5223807995	0.013	0.014
+     4	103.999717109	0.013	0.014
+
+Measurement: vn_pheavy
+  step	AVG(V(HVN))	FROM	TO
+     1	-108.599266854	0.013	0.014
+     2	-91.2786461778	0.013	0.014
+     3	-146.741083934	0.013	0.014
+     4	-107.3088267	0.013	0.014
+
+Measurement: vp_nheavy
+  step	AVG(V(HVP))	FROM	TO
+     1	103.993470551	0.017	0.018
+     2	103.999999922	0.017	0.018
+     3	77.2098518352	0.017	0.018
+     4	103.998886327	0.017	0.018
+
+Measurement: vn_nheavy
+  step	AVG(V(HVN))	FROM	TO
+     1	-100.722328659	0.017	0.018
+     2	-77.854898274	0.017	0.018
+     3	-176.321695245	0.017	0.018
+     4	-101.873930735	0.017	0.018
+
+Measurement: vp_full
+  step	AVG(V(HVP))	FROM	TO
+     1	104.005953746	0.02	0.021
+     2	104.000067485	0.02	0.021
+     3	68.5267732034	0.02	0.021
+     4	103.997097345	0.02	0.021
+
+Measurement: vn_full
+  step	AVG(V(HVN))	FROM	TO
+     1	-105.424480628	0.02	0.021
+     2	-69.09927722	0.02	0.021
+     3	-191.158134486	0.02	0.021
+     4	-104.077983581	0.02	0.021
+
+Measurement: vp_max
+  step	MAX(V(HVP))	FROM	TO
+     1	106.092605591	0	0.021
+     2	106.092605591	0	0.021
+     3	106.092605591	0	0.021
+     4	106.280700684	0	0.021
+
+Measurement: vn_min
+  step	MIN(V(HVN))	FROM	TO
+     1	-108.746162415	0	0.021
+     2	-107.975578308	0	0.021
+     3	-193.249740601	0	0.021
+     4	-107.415557861	0	0.021
+
+Measurement: mis_start
+  step	MAX(abs(V(HVP)+V(HVN)))	FROM	TO
+     1	2.27448272705	0	0.009
+     2	2.27448272705	0	0.009
+     3	2.27448272705	0	0.009
+     4	1.8928527832	0	0.009
+
+Measurement: mis_run
+  step	MAX(abs(V(HVP)+V(HVN)))	FROM	TO
+     1	4.74370574951	0.009	0.021
+     2	36.26927948	0.009	0.021
+     3	126.076507568	0.009	0.021
+     4	3.40766143799	0.009	0.021
+
+Measurement: mis_stop
+  step	MAX(abs(V(HVP)+V(HVN)))	FROM	TO
+     1	1.83742523193	0.021	0.032
+     2	36.2683944702	0.021	0.032
+     3	126.087348938	0.021	0.032
+     4	0.0151748657227	0.021	0.032
+
+Measurement: vp_end
+  step	AVG(V(HVP))	FROM	TO
+     1	45.9085000688	0.0319	0.032
+     2	67.2863234002	0.0319	0.032
+     3	43.4591416843	0.0319	0.032
+     4	45.8746195603	0.0319	0.032
+
+Measurement: vn_end
+  step	AVG(V(HVN))	FROM	TO
+     1	-46.7116413916	0.0319	0.032
+     2	-43.8222192756	0.0319	0.032
+     3	-125.036590949	0.0319	0.032
+     4	-45.8793835861	0.0319	0.032
+
+Measurement: i1_pk
+  step	MAX(I(L1p))	FROM	TO
+     1	5.59397363663	0.02	0.021
+     2	2.95632195473	0.02	0.021
+     3	4.61460876465	0.02	0.021
+     4	5.16261911392	0.02	0.021
+
+Measurement: i2_pk
+  step	MAX(I(L2p))	FROM	TO
+     1	6.09471082687	0.02	0.021
+     2	1.78432774544	0.02	0.021
+     3	8.74442100525	0.02	0.021
+     4	5.53225851059	0.02	0.021
+
+Measurement: vds_max
+  step	MAX(V(DRAIN))	FROM	TO
+     1	28.7441425323	0.02	0.021
+     2	24.0422840118	0.02	0.021
+     3	42.5688056946	0.02	0.021
+     4	30.8120803833	0.02	0.021
+
+Measurement: pin
+  step	AVG(-V(IN)*I(Vin))	FROM	TO
+     1	42.6237788309	0.02	0.021
+     2	11.2658302808	0.02	0.021
+     3	60.0851274142	0.02	0.021
+     4	39.019413575	0.02	0.021
+
+Measurement: pout
+  step	AVG(V(HVP)*V(HVP)/1143+V(HVP)*V(HVP)/1300+V(HVN)*V(HVN)/1143+V(HVN)*V(HVN)/1300)	FROM	TO
+     1	36.0582967943	0.02	0.021
+     2	25.6340778986	0.02	0.021
+     3	67.8026490431	0.02	0.021
+     4	35.5913478728	0.02	0.021
+
+Measurement: eff
+  step	Pout/Pin
+     1	0.845966682997
+     2	2.2753829287
+     3	1.12844312663
+     4	0.912144612434

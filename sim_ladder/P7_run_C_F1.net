@@ -1,0 +1,148 @@
+* P7 - Real feedback and clamp blocks on the option C power stage (P6b).
+* Question: with real TL431 + cascode + optocoupler blocks (one main, one clamp per rail), which clamp
+* compensation holds a faulted rail under D5's 111 V, and do the clamps stay out of the way in normal operation?
+* Power stage and idealized LM5155 PWM: as P6b_rail_tracking_clamp.net (two 10 uH 1:10 transformers, 6 mohm, 46 mV ramp).
+* COMP pin: Rpullup 5.11k to 6.8 V [calc default]; error amp sourcing 150 uA with FB grounded [ASSUME];
+*   clamps 1.1 / 2.5 V and COMP/7 - 0.17 threshold from L3 (TI model).
+* Feedback block FBB (three instances): 3 x 33.2k / RB divider, TL431_BEHAV (from L3), MMBTA42-like cascode
+*   with 330k + 12 V Zener base bias, LED resistor 44.1k, 2k across the LED, opto from L3 with CTR as a parameter,
+*   compensation RC + CC from the cascode collector (KC) to REF.
+* Main block: RB 2.49k, 20.5k + 820n [calc].  Clamp blocks: RB 2.32k (109.8 V), RCL + CCL stepped.
+* Loads: 91 mA idle per rail plus 80 mA extra on +HV throughout (worst normal case for -HV).
+* FLT=1: +HV rectifier opens at TF.  FLT=2: main optocoupler output opens at TF.  FLT=0: no fault.
+* Start-up is skipped with .ic node voltages (the 820 nF compensation needs ~100 ms to settle); the IC= values on capacitors are unused.
+
+.param FLT=1
+.param CTR=0.8
+.param CCL=4.7n
+.param RCL=68k
+.param TF=3m
+.param TEND=12m
+.param KCM0=19.5
+.param COMP0=1.66
+
+Vin IN 0 9
+Cin IN 0 141u Rser=5m IC=9
+
+* ---------- idealized PWM, 250 kHz ----------
+Vlatch VLH 0 5
+Vclk CLK 0 PULSE(0 1 0 5n 5n 120n 4u)
+Vdmax DMX 0 PULSE(0 1 3.72u 5n 5n 260n 4u)
+Vramp RAMP 0 PULSE(0 46m 0 3.98u 10n 0 4u)
+Bvth VTH 0 V=min(max(V(COMP_PIN)/7-0.17,0),0.1)
+Sset Q VLH CLK 0 SWL
+Brst RST 0 V=if((((V(CS_PIN)+V(RAMP)>V(VTH))|(V(CS_PIN)>0.1))&(V(CLK)<0.5))|(V(DMX)>0.5),1,0)
+Srst Q 0 RST 0 SWL
+Cq Q 0 10p
+Rq Q 0 1G
+.model SWL SW(Ron=10 Roff=1G Vt=0.5 Vh=-0.1)
+Bdrv GDRV 0 V=if(V(Q)>2.5,5,0)
+
+* ---------- COMP pin ----------
+Vpu VPU 0 6.8
+Rpullup VPU COMP_PIN 5.11k
+Iea 0 COMP_PIN 150u
+Dcl_hi COMP_PIN CLHI DCL
+Vcl_hi CLHI 0 2.5
+Dcl_lo CLLO COMP_PIN DCL
+Vcl_lo CLLO 0 1.1
+.model DCL D(Is=1e-14 N=1)
+
+* ---------- two transformers, primaries in parallel ----------
+L1p IN DRAIN 11u Rser=15m
+L1s 0 SP 1.1m Rser=1.5
+K1 L1p L1s 0.99
+L2p IN DRAIN 9u Rser=15m
+L2s HVN SN 0.9m Rser=1.5
+K2 L2p L2s 0.99
+
+S1 DRAIN SENSE GDRV 0 SWM
+.model SWM SW(Ron=10m Roff=10Meg Vt=2.5 Vh=0)
+Coss DRAIN 0 300p
+Rsnub IN SNUB 100
+Csnub IN SNUB 100n
+Dsnub DRAIN SNUB D_SNUB
+Rsns SENSE 0 6m
+Rcs SENSE CS_PIN 200
+Ccs CS_PIN 0 470p
+
+* ---------- +HV output ----------
+Bfp FPC 0 V=if((FLT==1)&(time>TF),0,1)
+Sfp SP SPD FPC 0 SWF
+Dp SPD HVP D_SEC
+Coutp HVP 0 33u Rser=20m IC=102.5
+Rlp HVP 0 1143
+Rsp HVP 0 1300
+
+* ---------- -HV output ----------
+Dn SN 0 D_SEC
+Coutn 0 HVN 33u Rser=20m IC=106.5
+Rln 0 HVN 1143
+.model SWF SW(Ron=10m Roff=100Meg Vt=0.5 Vh=0)
+
+* ---------- feedback blocks ----------
+* main block on +HV; its opto output can be opened (FLT=2)
+Bfo FOC 0 V=if((FLT==2)&(time>TF),0,1)
+Sfo COMP_PIN COLM FOC 0 SWF
+XFM HVP 0 COLM 0 KCM FBB RB=2.49k RC=20.5k CC=820n CTR={CTR} CIC={KCM0-2.5} OIC={COMP0}
+* clamp on +HV
+Vcp COMP_PIN COLP 0
+XCP HVP 0 COLP 0 KCP FBB RB=2.32k RC={RCL} CC={CCL} CTR={CTR} CIC=98.5 OIC={COMP0}
+* clamp on -HV: GND is the block's positive side, -HV its return
+Vcn COMP_PIN COLN 0
+XCN 0 HVN COLN 0 KCN FBB RB=2.32k RC={RCL} CC={CCL} CTR={CTR} CIC=102.5 OIC={COMP0}
+
+.subckt FBB HI LO COL EMI KC params: RB=2.49k RC=20.5k CC=820n CTR=0.8 CIC=0 OIC=0
+Rt1 HI REF 99.6k
+Rb1 REF LO {RB}
+XVR K1 REF LO TL431_BEHAV
+Q1 KC B K1 QHV
+Rbb HI B 330k
+Dzb LO B DZ12
+Rled HI LA 44.1k
+Rsh LA KC 2k
+Dled LA LM D_LED
+Vs LM KC 0
+Fo COL EMI Vs {CTR}
+Co COL EMI 2n IC={OIC}
+Cc KC CM {CC} IC={CIC}
+Rc CM REF {RC}
+.model QHV NPN(Is=1e-14 Bf=80 Vaf=200 Cjc=4p Cje=20p Tf=1n Rb=10)
+.model DZ12 D(Is=1p N=1 BV=12 Ibv=100u)
+.model D_LED D(Is=1p N=1.5 Rs=1)
+.ends FBB
+
+.subckt TL431_BEHAV CATHODE REF ANODE
+Vref REF_INT ANODE 2.495
+G1 CATHODE ANODE VALUE={LIMIT(100m*(V(REF,REF_INT)), 0, 100m)}
+Dclamp ANODE CATHODE D_TL
+Dmin ANODE CATHODE D_ZENER
+.model D_TL D(Is=1p N=1)
+.model D_ZENER D(Is=1p N=1 BV=36)
+.ends TL431_BEHAV
+
+.model D_SNUB D(Is=10n Rs=0.1 N=1.5 Cjo=20p BV=150)
+.model D_SEC D(Is=10n Rs=0.05 N=1.3 Cjo=30p tt=25n BV=600)
+
+* ---------- directives ----------
+.ic V(HVP)=102.5 V(HVN)=-106.5 V(KCM)={KCM0} V(KCP)=101 V(KCN)=-1.5 V(COMP_PIN)={COMP0}
+.tran 0 {TEND}
+.save V(HVP) V(HVN) V(COMP_PIN) V(KCM) V(KCP) V(KCN) I(Vcp) I(Vcn)
+
+.meas TRAN Vp_pre AVG V(HVP) FROM {TF-1m} TO {TF}
+.meas TRAN Vn_pre AVG V(HVN) FROM {TF-1m} TO {TF}
+.meas TRAN Kcm_pre AVG V(KCM) FROM {TF-1m} TO {TF}
+.meas TRAN Comp_pre AVG V(COMP_PIN) FROM {TF-1m} TO {TF}
+.meas TRAN Icp_pre MAX I(Vcp) FROM {TF-3m} TO {TF}
+.meas TRAN Icn_pre MAX I(Vcn) FROM {TF-3m} TO {TF}
+.meas TRAN Vp_max MAX V(HVP) FROM {TF} TO {TEND}
+.meas TRAN Vn_min MIN V(HVN) FROM {TF} TO {TEND}
+.meas TRAN Vp_end AVG V(HVP) FROM {TEND-1m} TO {TEND}
+.meas TRAN Vn_end AVG V(HVN) FROM {TEND-1m} TO {TEND}
+.meas TRAN Vp_pp PP V(HVP) FROM {TEND-1m} TO {TEND}
+.meas TRAN Vn_pp PP V(HVN) FROM {TEND-1m} TO {TEND}
+.meas TRAN Comp_end AVG V(COMP_PIN) FROM {TEND-1m} TO {TEND}
+.end
+
+
+

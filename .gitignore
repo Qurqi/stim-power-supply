@@ -1,0 +1,23 @@
+# LTspice waveforms and caches (regenerate by running the netlist)
+*.raw
+*.op.raw
+*.log.raw
+*.db
+sim_ladder/*_status*.txt
+
+# KiCad local state and backups
+*.kicad_prl
+*-backups/
+fp-info-cache
+_autosave-*
+*.lck
+\#auto_saved_files#
+pcb/tools/exported.net
+pcb/tools/erc.json
+
+# Office lock files
+~$*
+
+# Python
+__pycache__/
+*.pyc

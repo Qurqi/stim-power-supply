@@ -1,0 +1,59 @@
+LTspice 26.1.1 for Windows
+Circuit: C:\Users\Johnd\OneDrive\Desktop\power_Supply\sim_ladder\P9_run_M4.net
+Start Time: Sun Nov 15 09:38:15 2026
+Options:cshunt=1e-15 noopiter gminsteps=0 srcsteps=0
+solver = Normal
+Maximum thread count: 8
+tnom = 27
+temp = 27
+method = trap
+noOpIter = true
+Direct Newton iteration for .op point skipped.
+Gmin stepping method for .op point skipped.
+Source stepping method for .op point skipped.
+Direct Newton iteration for .op point skipped.
+Gmin stepping method for .op point skipped.
+Source stepping method for .op point skipped.
+Pseudo Transient succeeded in finding the operating point at 41.6553 s
+Total elapsed time: 118.163 seconds.
+Total iterations: 3929453
+
+Files loaded:
+C:\Users\Johnd\OneDrive\Desktop\power_Supply\sim_ladder\P9_run_M4.net
+
+vp_bal: AVG(V(HVP))=100.810380473 FROM 0.0015 TO 0.0025
+vn_bal: AVG(V(HVN))=-100.204853833 FROM 0.0015 TO 0.0025
+op_bal: AVG(V(OUTP))=100.729742701 FROM 0.0015 TO 0.0025
+on_bal: AVG(V(OUTN))=-100.144980143 FROM 0.0015 TO 0.0025
+vp_imb: AVG(V(HVP))=103.44017487 FROM 0.0035 TO 0.0045
+vn_imb: AVG(V(HVN))=-102.118299748 FROM 0.0035 TO 0.0045
+vp_last: AVG(V(HVP))=103.995168157 FROM 0.004 TO 0.005
+vn_last: AVG(V(HVN))=-102.640900223 FROM 0.004 TO 0.005
+op_last: AVG(V(OUTP))=103.911778291 FROM 0.004 TO 0.005
+on_last: AVG(V(OUTN))=-102.576596799 FROM 0.004 TO 0.005
+rip_raw_p: PP(V(HVP))=0.582244873047 FROM 0.0049 TO 0.005
+rip_raw_n: PP(V(HVN))=0.519218444824 FROM 0.0049 TO 0.005
+rip_out_p: PP(V(OUTP))=0.0981369018555 FROM 0.0049 TO 0.005
+rip_out_n: PP(V(OUTN))=0.105010986328 FROM 0.0049 TO 0.005
+vp_max: MAX(V(HVP))=104.7706604 FROM 0.0003 TO 0.005
+vn_min: MIN(V(HVN))=-103.385810852 FROM 0.0003 TO 0.005
+uvlo_min: MIN(V(UVLO))=1.46968531609 FROM 0.001 TO 0.005
+g_max: MAX(V(G))=0.61004370451 FROM 0 TO 0.005
+Measurement "t_trip" FAIL'ed
+t_100: V(HVP)=100 AT 4.77148719207e-10
+i1_pk: MAX(I(L1p))=8.59473896027 FROM 0.004 TO 0.005
+i2_pk: MAX(I(L2p))=8.33187294006 FROM 0.004 TO 0.005
+im_pk: MAX(Id(M1))=16.3261508942 FROM 0.004 TO 0.005
+vds_max: MAX(V(DRAIN))=26.1762828827 FROM 0.0003 TO 0.005
+vdp_rev: MAX(V(HVP)-V(SPD))=403.078155518 FROM 0.004 TO 0.005
+pin: AVG(V(IN)*I(Lbat))=46.4132353401 FROM 0.004 TO 0.005
+pout: AVG(V(OUTP)*V(OUTP)/{RLD}+V(OUTN)*V(OUTN)/{RLD}+V(OUTP)*V(OUTP)/2550+V(OUTN)*V(OUTN)/2550)=35.7288701762 FROM 0.004 TO 0.005
+eff: Pout/Pin=0.769799172896
+p_m1: AVG(V(DRAIN)-V(SENSE))*Id(M1)=0.53270137675 FROM 0.004 TO 0.005
+p_snub: AVG((V(SNUB)-V(IN))*(V(SNUB)-V(IN))/100)=1.37404284899 FROM 0.004 TO 0.005
+p_core: AVG((V(IN)-V(DRAIN))*(V(IN)-V(DRAIN))/230)=0.383689966497 FROM 0.004 TO 0.005
+p_rsns: AVG(Id(M1)*Id(M1)*6m)=0.360343645444 FROM 0.004 TO 0.005
+p_dp: AVG(V(SPD)-V(HVP))*I(Dp)=0.263296221237 FROM 0.004 TO 0.005
+p_dn: AVG(V(SN)*I(Dn))=0.202629416651 FROM 0.004 TO 0.005
+comp_last: AVG(V(COMP_PIN))=3.15133760428 FROM 0.004 TO 0.005
+kcm_last: AVG(V(KCM))=24.0625381908 FROM 0.004 TO 0.005

@@ -1,0 +1,115 @@
+LTspice 26.1.1 for Windows
+Circuit: C:\Users\Johnd\OneDrive\Desktop\power_Supply\sim_ladder\P6b_rail_tracking_clamp.net
+Start Time: Sat Nov 14 15:42:34 2026
+
+.step run=1
+solver = Normal
+Maximum thread count: 8
+tnom = 27
+temp = 27
+method = trap
+Direct Newton iteration succeeded in finding operating point.
+
+.step run=3
+Direct Newton iteration succeeded in finding operating point.
+Total elapsed time: 627.201 seconds.
+Total iterations: 64777503
+
+Files loaded:
+C:\Users\Johnd\OneDrive\Desktop\power_Supply\sim_ladder\P6b_rail_tracking_clamp.net
+
+
+Measurement: vp_idle
+  step	AVG(V(HVP))	FROM	TO
+     1	102.004363719	0.019	0.02
+     2	102.004363719	0.019	0.02
+
+Measurement: vn_idle
+  step	AVG(V(HVN))	FROM	TO
+     1	-102.95076798	0.019	0.02
+     2	-102.95076798	0.019	0.02
+
+Measurement: vp_pheavy
+  step	AVG(V(HVP))	FROM	TO
+     1	102.000314562	0.023	0.024
+     2	93.0007510718	0.023	0.024
+
+Measurement: vn_pheavy
+  step	AVG(V(HVN))	FROM	TO
+     1	-106.192944565	0.023	0.024
+     2	-109.908186861	0.023	0.024
+
+Measurement: vp_nheavy
+  step	AVG(V(HVP))	FROM	TO
+     1	101.994973951	0.027	0.028
+     2	83.6432606876	0.027	0.028
+
+Measurement: vn_nheavy
+  step	AVG(V(HVN))	FROM	TO
+     1	-99.5462218628	0.027	0.028
+     2	-110.008896993	0.027	0.028
+
+Measurement: vp_full
+  step	AVG(V(HVP))	FROM	TO
+     1	102.001597402	0.03	0.031
+     2	77.2483707792	0.03	0.031
+
+Measurement: vn_full
+  step	AVG(V(HVN))	FROM	TO
+     1	-102.553313673	0.03	0.031
+     2	-110.078639697	0.03	0.031
+
+Measurement: vp_max
+  step	MAX(V(HVP))	FROM	TO
+     1	103.785552979	0	0.031
+     2	103.785552979	0	0.031
+
+Measurement: vn_min
+  step	MIN(V(HVN))	FROM	TO
+     1	-106.267433167	0	0.031
+     2	-110.150718689	0	0.031
+
+Measurement: mis_start
+  step	MAX(abs(V(HVP)+V(HVN)))	FROM	TO
+     1	2.07968139648	0	0.019
+     2	2.07968139648	0	0.019
+
+Measurement: mis_run
+  step	MAX(abs(V(HVP)+V(HVN)))	FROM	TO
+     1	4.26979827881	0.019	0.031
+     2	33.863319397	0.019	0.031
+
+Measurement: mis_stop
+  step	MAX(abs(V(HVP)+V(HVN)))	FROM	TO
+     1	0.911079406738	0.031	0.042
+     2	33.8369674683	0.031	0.042
+
+Measurement: vn_min_fault
+  step	MIN(V(HVN))	FROM	TO
+     1	-106.267433167	0.02	0.031
+     2	-110.150718689	0.02	0.031
+
+Measurement: vp_max_fault
+  step	MAX(V(HVP))	FROM	TO
+     1	102.221107483	0.02	0.031
+     2	102.04309082	0.02	0.031
+
+Measurement: vp_end
+  step	AVG(V(HVP))	FROM	TO
+     1	59.1256964381	0.0419	0.042
+     2	57.0220545584	0.0419	0.042
+
+Measurement: vn_end
+  step	AVG(V(HVN))	FROM	TO
+     1	-59.6498010192	0.0419	0.042
+     2	-82.3333795892	0.0419	0.042
+
+Measurement: i1_pk
+  step	MAX(I(L1p))	FROM	TO
+     1	5.41434431076	0.03	0.031
+     2	5.22927713394	0.03	0.031
+
+Measurement: i2_pk
+  step	MAX(I(L2p))	FROM	TO
+     1	5.91941356659	0.03	0.031
+     2	7.95440149307	0.03	0.031

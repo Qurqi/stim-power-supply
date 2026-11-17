@@ -1,0 +1,28 @@
+LTspice 26.1.1 for Windows
+Circuit: C:\Users\Johnd\OneDrive\Desktop\power_Supply\sim_ladder\P9_run_S1u.net
+Start Time: Mon Nov 16 18:05:50 2026
+Options:cshunt=1e-15 noopiter gminsteps=0 srcsteps=0
+solver = Normal
+Maximum thread count: 8
+tnom = 27
+temp = 27
+method = trap
+noOpIter = true
+Direct Newton iteration for .op point skipped.
+Gmin stepping method for .op point skipped.
+Source stepping method for .op point skipped.
+Direct Newton iteration for .op point skipped.
+Gmin stepping method for .op point skipped.
+Source stepping method for .op point skipped.
+Pseudo Transient succeeded in finding the operating point at 79.4613 s
+Warning: Simulation tolerance relaxed to achieve convergence from 7.6491722500025783e-02 to 7.6491722500025880e-02 seconds.
+Warning: Simulation tolerance relaxed to achieve convergence from 7.6491722500025880e-02 to 7.6491722500025977e-02 seconds.
+Total elapsed time: 3728.971 seconds.
+Total iterations: 71586072
+
+Files loaded:
+C:\Users\Johnd\OneDrive\Desktop\power_Supply\sim_ladder\P9_run_S1u.net
+
+C:\Users\Johnd\OneDrive\Desktop\power_Supply\sim_ladder\P9_run_S1u.net(230): Voltage not found.
+.meas TRAN Op_bal AVG V(OUTP) FROM 1.5m TO 2.5m
+                      ^^^^^^^

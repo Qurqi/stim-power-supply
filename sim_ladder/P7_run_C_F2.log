@@ -1,0 +1,31 @@
+LTspice 26.1.1 for Windows
+Circuit: C:\Users\Johnd\OneDrive\Desktop\power_Supply\sim_ladder\P7_run_C_F2.net
+Start Time: Sat Nov 14 16:47:19 2026
+solver = Normal
+Maximum thread count: 8
+tnom = 27
+temp = 27
+method = trap
+Direct Newton iteration failed to find operating point.
+Starting Gmin stepping
+Gmin stepping succeeded in finding the operating point.
+
+Total elapsed time: 259.398 seconds.
+Total iterations: 26139647
+
+Files loaded:
+C:\Users\Johnd\OneDrive\Desktop\power_Supply\sim_ladder\P7_run_C_F2.net
+
+vp_pre: AVG(V(HVP))=101.857660228 FROM 0.002 TO 0.003
+vn_pre: AVG(V(HVN))=-106.533171673 FROM 0.002 TO 0.003
+kcm_pre: AVG(V(KCM))=19.7932415676 FROM 0.002 TO 0.003
+comp_pre: AVG(V(COMP_PIN))=1.71005528022 FROM 0.002 TO 0.003
+icp_pre: MAX(I(Vcp))=5.75436060899e-05 FROM 0 TO 0.003
+icn_pre: MAX(I(Vcn))=5.75436060899e-05 FROM 0 TO 0.003
+vp_max: MAX(V(HVP))=113.8307724 FROM 0.003 TO 0.012
+vn_min: MIN(V(HVN))=-120.372383118 FROM 0.003 TO 0.012
+vp_end: AVG(V(HVP))=100.364789508 FROM 0.011 TO 0.012
+vn_end: AVG(V(HVN))=-112.414747131 FROM 0.011 TO 0.012
+vp_pp: PP(V(HVP))=5.13153839111 FROM 0.011 TO 0.012
+vn_pp: PP(V(HVN))=3.08826446533 FROM 0.011 TO 0.012
+comp_end: AVG(V(COMP_PIN))=0.521674623356 FROM 0.011 TO 0.012

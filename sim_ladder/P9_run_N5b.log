@@ -1,0 +1,73 @@
+LTspice 26.1.1 for Windows
+Circuit: C:\Users\Johnd\OneDrive\Desktop\power_Supply\sim_ladder\P9_run_N5b.net
+Start Time: Sun Nov 15 16:00:36 2026
+Options:cshunt=1e-15 noopiter gminsteps=0 srcsteps=0
+solver = Normal
+Maximum thread count: 8
+tnom = 27
+temp = 27
+method = trap
+noOpIter = true
+Direct Newton iteration for .op point skipped.
+Gmin stepping method for .op point skipped.
+Source stepping method for .op point skipped.
+Direct Newton iteration for .op point skipped.
+Gmin stepping method for .op point skipped.
+Source stepping method for .op point skipped.
+Pseudo Transient succeeded in finding the operating point at 4.29567 s
+Warning: Simulation tolerance relaxed to achieve convergence from 1.2362270643556123e-02 to 1.2362270643556224e-02 seconds.
+Warning: Simulation tolerance relaxed to achieve convergence from 1.2362270643556224e-02 to 1.2362270643556324e-02 seconds.
+Warning: Simulation tolerance relaxed to achieve convergence from 1.2362270643556324e-02 to 1.2362270643556425e-02 seconds.
+Warning: Simulation tolerance relaxed to achieve convergence from 1.2362270643556425e-02 to 1.2362270643556526e-02 seconds.
+Warning: Simulation tolerance relaxed to achieve convergence from 1.2362270643556526e-02 to 1.2362270643556626e-02 seconds.
+Warning: Simulation tolerance relaxed to achieve convergence from 1.2362270643556626e-02 to 1.2362270643556727e-02 seconds.
+Warning: Simulation tolerance relaxed to achieve convergence from 1.2362270643557027e-02 to 1.2362270643557128e-02 seconds.
+Warning: Simulation tolerance relaxed to achieve convergence from 1.2362270643557228e-02 to 1.2362270643557329e-02 seconds.
+Warning: Simulation tolerance relaxed to achieve convergence from 1.3599722500305342e-02 to 1.3599722500305443e-02 seconds.
+Warning: Simulation tolerance relaxed to achieve convergence from 1.3599722500305642e-02 to 1.3599722500305743e-02 seconds.
+Total elapsed time: 483.086 seconds.
+Total iterations: 12478015
+
+Files loaded:
+C:\Users\Johnd\OneDrive\Desktop\power_Supply\sim_ladder\P9_run_N5b.net
+
+vp_bal: AVG(V(HVP))=28.4728589844 FROM 0.0015 TO 0.0025
+vn_bal: AVG(V(HVN))=-30.5423643982 FROM 0.0015 TO 0.0025
+op_bal: AVG(V(OUTP))=28.4071581718 FROM 0.0015 TO 0.0025
+on_bal: AVG(V(OUTN))=-30.4755604071 FROM 0.0015 TO 0.0025
+vp_imb: AVG(V(HVP))=48.0248546743 FROM 0.0035 TO 0.0045
+vn_imb: AVG(V(HVN))=-49.7751685418 FROM 0.0035 TO 0.0045
+vp_last: AVG(V(HVP))=97.680252741 FROM 0.019 TO 0.02
+vn_last: AVG(V(HVN))=-95.020870077 FROM 0.019 TO 0.02
+op_last: AVG(V(OUTP))=97.6516278306 FROM 0.019 TO 0.02
+on_last: AVG(V(OUTN))=-94.9927694014 FROM 0.019 TO 0.02
+rip_raw_p: PP(V(HVP))=0.21891784668 FROM 0.0199 TO 0.02
+rip_raw_n: PP(V(HVN))=0.207748413086 FROM 0.0199 TO 0.02
+rip_out_p: PP(V(OUTP))=0.218841552734 FROM 0.0199 TO 0.02
+rip_out_n: PP(V(OUTN))=0.20768737793 FROM 0.0199 TO 0.02
+vp_max: MAX(V(HVP))=107.360092163 FROM 0.0003 TO 0.02
+vn_min: MIN(V(HVN))=-104.257865906 FROM 0.0003 TO 0.02
+uvlo_min: MIN(V(UVLO))=0.624337852001 FROM 0.001 TO 0.02
+g_max: MAX(V(G))=0.642759680748 FROM 0 TO 0.02
+t_trip: V(UVLO)=1.2 AT 0.0155487188982
+t_100: V(HVP)=100 AT 0.0133834376082
+i1_pk: MAX(I(L1p))=0.00107911170926 FROM 0.019 TO 0.02
+i2_pk: MAX(I(L2p))=-0.000178449918167 FROM 0.019 TO 0.02
+im_pk: MAX(Id(M1))=0.000469611230073 FROM 0.019 TO 0.02
+vds_max: MAX(V(DRAIN))=42.695728302 FROM 0.0003 TO 0.02
+vdp_rev: MAX(V(HVP)-V(SPD))=98.7904510006 FROM 0.019 TO 0.02
+pin: AVG(V(IN)*I(Lbat))=0.00150896740656 FROM 0.019 TO 0.02
+pout: AVG(V(OUTP)*V(OUTP)/{RLD}+V(OUTN)*V(OUTN)/{RLD}+V(OUTP)*V(OUTP)/2550+V(OUTN)*V(OUTN)/2550)=23.8353867369 FROM 0.019 TO 0.02
+eff: Pout/Pin=15795.8260949
+p_m1: AVG(V(DRAIN)-V(SENSE))*Id(M1)=3.04281120435e-10 FROM 0.019 TO 0.02
+p_snub: AVG((V(SNUB)-V(IN))*(V(SNUB)-V(IN))/100)=0 FROM 0.019 TO 0.02
+p_core: AVG((V(IN)-V(DRAIN))*(V(IN)-V(DRAIN))/230)=1.43116022411e-14 FROM 0.019 TO 0.02
+p_rsns: AVG(Id(M1)*Id(M1)*6m)=3.04290405762e-10 FROM 0.019 TO 0.02
+p_dp: AVG(V(SPD)-V(HVP))*I(Dp)=2.36759914713e-07 FROM 0.019 TO 0.02
+p_dn: AVG(V(SN)*I(Dn))=2.38860622998e-07 FROM 0.019 TO 0.02
+rip_in: PP(V(IN))=0 FROM 0.0199 TO 0.02
+icin1_rms: RMS(I(Cin1))=8.29789925192e-08 FROM 0.019 TO 0.02
+icinx_rms: RMS(I(Cinx))=2.07447658912e-05 FROM 0.019 TO 0.02
+vin_min: MIN(V(IN))=8.04866695404 FROM 0.001 TO 0.02
+comp_last: AVG(V(COMP_PIN))=3.12751837741 FROM 0.019 TO 0.02
+kcm_last: AVG(V(KCM))=50.618824379 FROM 0.019 TO 0.02

@@ -1,0 +1,130 @@
+* NOTE: every event in the timeline below happens 10 ms LATER in this file (imbalance from 20 ms, stop at 31 ms),
+* because start-up with 33 uF had not finished by 10 ms.
+* P6b - As P6_rail_tracking.net, with the 14 Nov changes: setpoint 102 V, 33 uF per rail,
+* slope ramp 46 mV (40 mV internal + 200 ohm external [calc]), and an idealized over-voltage clamp on EACH rail
+* at 109.8 V that pulls COMP down (stands in for a TL431 + optocoupler per rail) [ASSUME gain].
+* P6 - Rail tracking check for decision P-6, option C:
+* ONE idealized peak-current-mode controller and ONE switch drive TWO catalogue transformers
+* with their primaries in parallel. T1 feeds +HV (regulated), T2 feeds -HV (follows, unregulated).
+* Question: do the rails track (start-up, load imbalance, shutdown), and what happens when one
+* output rectifier fails open?  Limit to compare against: rails under 110 V (D5 SMBJ100CA, 111 V min).
+* Controller: same idealized LM5155 as L3_real_parts.net (thresholds from the TI model), plus
+*   slope compensation 40 mV per period [ASSUME] because this design runs CCM above 50 % duty,
+*   soft start 6 ms [ASSUME], and an ideal gm error amp on +HV instead of the TL431/opto network.
+* Transformers: 10 uH, 1:10, k = 0.99 (2 % leakage) [DS summary, Coilcraft DA2034-AL, unconfirmed];
+*   worst-case mismatch +10 % / -10 % [H]; winding resistance 15 mohm / 1.5 ohm [ASSUME].
+* Switch is ideal (10 mohm) for speed; clamp and diode models are from L3.
+*
+* RUN 1: 9 V, no fault     RUN 2: 9 V, -HV rectifier opens at 10 ms
+* RUN 3: 9 V, +HV rectifier opens at 10 ms (regulated rail lost)     RUN 4: 12.6 V, no fault
+* Timeline (RUN 1 and 4): 0-6 ms soft start, idle load 91 mA per rail; 10-14 ms +80 mA on +HV only;
+*   14-18 ms +80 mA on -HV only; 18-21 ms +80 mA on both (171 mA each); 21 ms controller stops.
+
+.param RUN=1
+.param VIN=if(RUN==4,12.6,9)
+.param FLT=if(RUN==2,1,if(RUN==3,2,0))
+.param VSET=102
+
+* ---------- input ----------
+Vin IN 0 {VIN}
+Cin IN 0 141u Rser=5m
+
+* ---------- idealized controller, 250 kHz ----------
+Vvcc VCC_PIN 0 5
+Vclk CLK0 0 PULSE(0 1 0 5n 5n 120n 4u)
+Bclk CLK 0 V=if(time<31m,V(CLK0),0)
+Vdmax DMX 0 PULSE(0 1 3.72u 5n 5n 260n 4u)
+Vramp RAMP 0 PULSE(0 46m 0 3.98u 10n 0 4u)
+Bvth VTH 0 V=min(max(V(COMP_PIN)/7-0.17,0),0.1)
+Sset Q VCC_PIN CLK 0 SWL
+Brst RST 0 V=if((((V(CS_PIN)+V(RAMP)>V(VTH))|(V(CS_PIN)>0.1))&(V(CLK)<0.5))|(V(DMX)>0.5)|(time>31m),1,0)
+Srst Q 0 RST 0 SWL
+Cq Q 0 10p
+Rq Q 0 1G
+.model SWL SW(Ron=10 Roff=1G Vt=0.5 Vh=-0.1)
+Bdrv GDRV 0 V=if(V(Q)>2.5,5,0)
+
+* ideal gm error amp on +HV with soft start; COMP clamps as in L3
+Bref VREF 0 V=min(2.5,2.5*time/6m)
+Bfb VFB 0 V=V(HVP)*2.5/{VSET}
+Bea 0 COMP_PIN I=min(max(200u*(V(VREF)-V(VFB)),-200u),200u)
+Bovp COMP_PIN 0 I=min(max(20m*(V(HVP)*2.5/109.8-2.5),0),1m)+min(max(20m*(-V(HVN)*2.5/109.8-2.5),0),1m)
+Rc COMP_PIN COMP_MID 100k
+Cc COMP_MID 0 3.9n
+Cp COMP_PIN 0 82p
+Dcl_hi COMP_PIN CLHI DCL
+Vcl_hi CLHI 0 2.5
+Dcl_lo CLLO COMP_PIN DCL
+Vcl_lo CLLO 0 1.1
+.model DCL D(Is=1e-14 N=1)
+
+* ---------- two transformers, primaries in parallel ----------
+L1p IN DRAIN 11u Rser=15m
+L1s 0 SP 1.1m Rser=1.5
+K1 L1p L1s 0.99
+L2p IN DRAIN 9u Rser=15m
+L2s HVN SN 0.9m Rser=1.5
+K2 L2p L2s 0.99
+
+* ---------- switch, clamp, current sense ----------
+S1 DRAIN SENSE GDRV 0 SWM
+.model SWM SW(Ron=10m Roff=10Meg Vt=2.5 Vh=0)
+Coss DRAIN 0 300p
+Rsnub IN SNUB 100
+Csnub IN SNUB 100n
+Dsnub DRAIN SNUB D_SNUB
+Rsns SENSE 0 6m
+Rcs SENSE CS_PIN 100
+Ccs CS_PIN 0 470p
+
+* ---------- +HV output (regulated) ----------
+Bfp FPC 0 V=if((FLT==2)&(time>20m),0,1)
+Sfp SP SPD FPC 0 SWF
+Dp SPD HVP D_SEC
+Coutp HVP 0 33u Rser=20m
+Rlp HVP 0 1143
+Bsp SPC 0 V=if((FLT==0)&(((time>20m)&(time<24m))|(time>28m)),1,0)
+Ssp HVP LP SPC 0 SWF
+Rsp LP 0 1300
+
+* ---------- -HV output (follows) ----------
+Bfn FNC 0 V=if((FLT==1)&(time>20m),0,1)
+Sfn SN SND FNC 0 SWF
+Dn SND 0 D_SEC
+Coutn 0 HVN 33u Rser=20m
+Rln 0 HVN 1143
+Bsn SNC 0 V=if((FLT==0)&(time>24m),1,0)
+Ssn 0 LN SNC 0 SWF
+Rsn LN HVN 1300
+.model SWF SW(Ron=10m Roff=100Meg Vt=0.5 Vh=0)
+
+.model D_SNUB D(Is=10n Rs=0.1 N=1.5 Cjo=20p BV=150)
+.model D_SEC D(Is=10n Rs=0.05 N=1.3 Cjo=30p tt=25n BV=600)
+
+* ---------- directives ----------
+.step param RUN list 1 3
+.tran 0 42m
+.save V(HVP) V(HVN) I(L1p) I(L2p)
+
+.meas TRAN Vp_idle AVG V(HVP) FROM 19m TO 20m
+.meas TRAN Vn_idle AVG V(HVN) FROM 19m TO 20m
+.meas TRAN Vp_Pheavy AVG V(HVP) FROM 23m TO 24m
+.meas TRAN Vn_Pheavy AVG V(HVN) FROM 23m TO 24m
+.meas TRAN Vp_Nheavy AVG V(HVP) FROM 27m TO 28m
+.meas TRAN Vn_Nheavy AVG V(HVN) FROM 27m TO 28m
+.meas TRAN Vp_full AVG V(HVP) FROM 30m TO 31m
+.meas TRAN Vn_full AVG V(HVN) FROM 30m TO 31m
+.meas TRAN Vp_max MAX V(HVP) FROM 0 TO 31m
+.meas TRAN Vn_min MIN V(HVN) FROM 0 TO 31m
+.meas TRAN Mis_start MAX abs(V(HVP)+V(HVN)) FROM 0 TO 19m
+.meas TRAN Mis_run MAX abs(V(HVP)+V(HVN)) FROM 19m TO 31m
+.meas TRAN Mis_stop MAX abs(V(HVP)+V(HVN)) FROM 31m TO 42m
+.meas TRAN Vn_min_fault MIN V(HVN) FROM 20m TO 31m
+.meas TRAN Vp_max_fault MAX V(HVP) FROM 20m TO 31m
+.meas TRAN Vp_end AVG V(HVP) FROM 41.9m TO 42m
+.meas TRAN Vn_end AVG V(HVN) FROM 41.9m TO 42m
+.meas TRAN I1_pk MAX I(L1p) FROM 30m TO 31m
+.meas TRAN I2_pk MAX I(L2p) FROM 30m TO 31m
+.end
+
+

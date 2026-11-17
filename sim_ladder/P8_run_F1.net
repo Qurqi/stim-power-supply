@@ -1,0 +1,169 @@
+* Revised 2026-11-14: main compensation 12.7k + 68n and CTR 1.0 (TCMT1108, 130-260 % at 5 mA [DS], derated for low LED current [ASSUME]).
+* P8 - Over-voltage TRIP with latch-off (decision P-13), on the option C power stage with the real main loop (P7).
+* Question: does a comparator trip per rail, latching the converter off, keep a faulted rail under D5's 111 V?
+* Trip block TRB (one per rail): 3 x 33.2k / 2.32k divider (109.8 V) with 4.7 nF noise filter on REF, TL431 used as a
+*   comparator (no compensation), 300 V NPN cascode, LED resistor 22k, 2k across the LED, optocoupler CTR parameter.
+* Both trip optocouplers: collector on COMP, emitter on the latch gate G. One optocoupler current therefore pulls COMP
+*   down (fast stop) and fires the latch.
+* Latch: NPN + PNP pair across the UVLO pin. Fired, it holds UVLO near 0.8 V (below the 1.45 V falling threshold);
+*   holding current comes from the battery through the UVLO divider top resistor, so only removing the battery resets it.
+* Controller model: as P7, plus switching inhibited while V(UVLO) < 1.45 V [DS summary thresholds from the TI calculator].
+* FLT=1: +HV rectifier opens at TF.  FLT=2: main optocoupler output opens at TF.  FLT=0: no fault.
+
+.param FLT=1
+.param CTR=1.0
+.param TF=3m
+.param TEND=12m
+.param KCM0=25.6
+.param COMP0=1.71
+
+Vin IN 0 9
+Cin IN 0 141u Rser=5m
+
+* ---------- UVLO divider and latch ----------
+Rent IN UVLO 44.2k
+Renb UVLO 0 9.53k
+Cbyp UVLO 0 220p
+QLN QPB G 0 QN
+QLP G QPB UVLO QP
+Rpb UVLO QPB 100k
+Rg G 0 10k
+Cg G 0 10n
+.model QN NPN(Is=1e-14 Bf=150 Cjc=4p Cje=8p Tf=0.4n Rb=10)
+.model QP PNP(Is=1e-14 Bf=150 Cjc=5p Cje=10p Tf=0.5n Rb=10)
+
+* ---------- idealized PWM, 250 kHz ----------
+Vlatch VLH 0 5
+Vclk CLK0 0 PULSE(0 1 0 5n 5n 120n 4u)
+Bclk CLK 0 V=if(V(UVLO)>1.45,V(CLK0),0)
+Vdmax DMX 0 PULSE(0 1 3.72u 5n 5n 260n 4u)
+Vramp RAMP 0 PULSE(0 46m 0 3.98u 10n 0 4u)
+Bvth VTH 0 V=min(max(V(COMP_PIN)/7-0.17,0),0.1)
+Sset Q VLH CLK 0 SWL
+Brst RST 0 V=if((((V(CS_PIN)+V(RAMP)>V(VTH))|(V(CS_PIN)>0.1))&(V(CLK)<0.5))|(V(DMX)>0.5)|(V(UVLO)<1.45),1,0)
+Srst Q 0 RST 0 SWL
+Cq Q 0 10p
+Rq Q 0 1G
+.model SWL SW(Ron=10 Roff=1G Vt=0.5 Vh=-0.1)
+Bdrv GDRV 0 V=if(V(Q)>2.5,5,0)
+
+* ---------- COMP pin ----------
+Vpu VPU 0 6.8
+Rpullup VPU COMP_PIN 5.11k
+Iea 0 COMP_PIN 150u
+Dcl_hi COMP_PIN CLHI DCL
+Vcl_hi CLHI 0 2.5
+Dcl_lo CLLO COMP_PIN DCL
+Vcl_lo CLLO 0 1.1
+.model DCL D(Is=1e-14 N=1)
+
+* ---------- two transformers, primaries in parallel ----------
+L1p IN DRAIN 11u Rser=15m
+L1s 0 SP 1.1m Rser=1.5
+K1 L1p L1s 0.99
+L2p IN DRAIN 9u Rser=15m
+L2s HVN SN 0.9m Rser=1.5
+K2 L2p L2s 0.99
+
+S1 DRAIN SENSE GDRV 0 SWM
+.model SWM SW(Ron=10m Roff=10Meg Vt=2.5 Vh=0)
+Coss DRAIN 0 300p
+Rsnub IN SNUB 100
+Csnub IN SNUB 100n
+Dsnub DRAIN SNUB D_SNUB
+Rsns SENSE 0 6m
+Rcs SENSE CS_PIN 200
+Ccs CS_PIN 0 470p
+
+* ---------- +HV output ----------
+Bfp FPC 0 V=if((FLT==1)&(time>TF),0,1)
+Sfp SP SPD FPC 0 SWF
+Dp SPD HVP D_SEC
+Coutp HVP 0 33u Rser=20m
+Rlp HVP 0 1143
+Rsp HVP 0 1300
+
+* ---------- -HV output ----------
+Dn SN 0 D_SEC
+Coutn 0 HVN 33u Rser=20m
+Rln 0 HVN 1143
+.model SWF SW(Ron=10m Roff=100Meg Vt=0.5 Vh=0)
+
+* ---------- main feedback block on +HV ----------
+Bfo FOC 0 V=if((FLT==2)&(time>TF),0,1)
+Sfo COMP_PIN COLM FOC 0 SWF
+XFM HVP 0 COLM 0 KCM FBB RB=2.49k RC=12.7k CC=68n CTR={CTR}
+
+* ---------- trip blocks ----------
+XTP HVP 0 COMP_PIN G KTP TRB CTR={CTR}
+XTN 0 HVN COMP_PIN G KTN TRB CTR={CTR}
+
+.subckt FBB HI LO COL EMI KC params: RB=2.49k RC=20.5k CC=820n CTR=0.8
+Rt1 HI REF 99.6k
+Rb1 REF LO {RB}
+XVR K1 REF LO TL431_BEHAV
+Q1 KC B K1 QHV
+Rbb HI B 330k
+Dzb LO B DZ12
+Rled HI LA 44.1k
+Rsh LA KC 2k
+Dled LA LM D_LED
+Vs LM KC 0
+Fo COL EMI Vs {CTR}
+Co COL EMI 2n
+Cc KC CM {CC}
+Rc CM REF {RC}
+.model QHV NPN(Is=1e-14 Bf=80 Vaf=200 Cjc=4p Cje=20p Tf=1n Rb=10)
+.model DZ12 D(Is=1p N=1 BV=12 Ibv=100u)
+.model D_LED D(Is=1p N=1.5 Rs=1)
+.ends FBB
+
+.subckt TRB HI LO COL EMI KC params: CTR=0.8
+Rt1 HI REF 99.6k
+Rb1 REF LO 2.32k
+Cf REF LO 4.7n
+XVR K1 REF LO TL431_BEHAV
+Q1 KC B K1 QHV
+Rbb HI B 330k
+Dzb LO B DZ12
+Rled HI LA 22k
+Rsh LA KC 2k
+Dled LA LM D_LED
+Vs LM KC 0
+Fo COL EMI Vs {CTR}
+Co COL EMI 2n
+.model QHV NPN(Is=1e-14 Bf=80 Vaf=200 Cjc=4p Cje=20p Tf=1n Rb=10)
+.model DZ12 D(Is=1p N=1 BV=12 Ibv=100u)
+.model D_LED D(Is=1p N=1.5 Rs=1)
+.ends TRB
+
+.subckt TL431_BEHAV CATHODE REF ANODE
+Vref REF_INT ANODE 2.495
+G1 CATHODE ANODE VALUE={LIMIT(100m*(V(REF,REF_INT)), 0, 100m)}
+Dclamp ANODE CATHODE D_TL
+Dmin ANODE CATHODE D_ZENER
+.model D_TL D(Is=1p N=1)
+.model D_ZENER D(Is=1p N=1 BV=36)
+.ends TL431_BEHAV
+
+.model D_SNUB D(Is=10n Rs=0.1 N=1.5 Cjo=20p BV=150)
+.model D_SEC D(Is=10n Rs=0.05 N=1.3 Cjo=30p tt=25n BV=600)
+
+* ---------- directives ----------
+.ic V(HVP)=102.5 V(HVN)=-106.5 V(KCM)={KCM0} V(KTP)=101 V(KTN)=-1.5 V(COMP_PIN)={COMP0} V(UVLO)=1.596 V(G)=0
+.tran 0 {TEND}
+.save V(HVP) V(HVN) V(COMP_PIN) V(UVLO) V(G) V(KCM)
+
+.meas TRAN Vp_pre AVG V(HVP) FROM {TF-1m} TO {TF}
+.meas TRAN Vn_pre AVG V(HVN) FROM {TF-1m} TO {TF}
+.meas TRAN Uvlo_pre MIN V(UVLO) FROM 0.2m TO {TF}
+.meas TRAN G_pre MAX V(G) FROM 0.2m TO {TF}
+.meas TRAN Vp_max MAX V(HVP) FROM {TF} TO {TEND}
+.meas TRAN Vn_min MIN V(HVN) FROM {TF} TO {TEND}
+.meas TRAN T_trip WHEN V(UVLO)=1.2 FALL=1
+.meas TRAN Vp_end AVG V(HVP) FROM {TEND-0.2m} TO {TEND}
+.meas TRAN Vn_end AVG V(HVN) FROM {TEND-0.2m} TO {TEND}
+.meas TRAN Uvlo_end AVG V(UVLO) FROM {TEND-0.2m} TO {TEND}
+.meas TRAN Comp_end AVG V(COMP_PIN) FROM {TEND-0.2m} TO {TEND}
+.end
+

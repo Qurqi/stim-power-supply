@@ -1,0 +1,254 @@
+* P9 - Final pre-layout simulation: option C with the JLCPCB parts and non-idealities.
+* One LM51551 (idealized PWM), one CSD19531Q5A switch, two Coilcraft DA2034-AL transformers with primaries in parallel,
+* ES1J rectifiers, 3 x 10 uF + 1 uF per rail, LC filter per rail, main feedback (TL431B + MMBTA42 cascode + TCMT1108),
+* a trip block per rail and a two-transistor latch across UVLO.
+*
+* Sources of values:  [DS] datasheet  [calc] TI calculator  [ASSUME] assumption  (see P9_final_RECORD.md)
+*   Transformer [DS Coilcraft 510]: 10 uH +/-10 % (11 uH and 9 uH used), 1:10, 18 mohm / 1.75 ohm, leakage 0.25 uH max
+*     (k = 0.9874), 128 pF interwinding (half lumped from switch node to the hot secondary end [ASSUME]).
+*   Core loss: NOT on the datasheet. Modelled as 460 ohm across each primary, about 0.2 W each [ASSUME].
+*   Switch [DS TI]: 6 mohm at 6 V drive, 37 nC, 2.7 V threshold; capacitances [ASSUME].
+*   Rectifier ES1J: 600 V, 1 A, 35 ns class [DS summary]; model parameters [ASSUME].
+*   Output electrolytics: 3 ohm series resistance each [ASSUME]; 1 uF 250 V X7R derated to 0.45 uF at 102 V [ASSUME].
+*   Filter inductor 0.35 ohm, bead 600 ohm / 0.1 ohm [ASSUME].  Battery 0.12 ohm, 200 nH [ASSUME].
+*   Optocoupler TCMT1108: CTR parameter (1.0 = assumed minimum at 1-2 mA LED current), 3 us response [ASSUME].
+*   Controller: thresholds from the TI model (as L3); 46 mV slope ramp [calc]; error amp sourcing 150 uA [ASSUME];
+*     NO soft start is modelled, so MODE 5 is a worst-case start-up.
+*   Not modelled: filter-inductor self-capacitance and ferrite-bead loss (they stalled the solver), sense-resistor inductance, PCB parasitics, temperature, optocoupler CTR versus current.
+*
+* MODE 1: 9 V steady state.  0-2.5 ms 131 mA per rail; 2.5-4.5 ms +40 mA on +HV only; 4.5-6 ms +40 mA on both (171 mA).
+* MODE 2: same at 12.6 V.
+* MODE 3: 9 V, +HV rectifier opens at 2 ms (171 / 131 mA).   MODE 4: 9 V, main optocoupler output opens at 2 ms.
+* MODE 5: start-up from zero at 9 V, battery applied over 0.2 ms, idle load 91 mA per rail, no soft start.
+* Modes 1-4 skip start-up: node voltages are preset with .ic near the operating point; the operating point is found by pseudo-transient (the IC= values on parts are unused).
+
+.param MODE=5
+.param VIN=if(MODE==2,12.6,9)
+.param FLT=if(MODE==3,1,if(MODE==4,2,0))
+.param SU=if(MODE==5,1,0)
+.param ON=1-SU
+.param STDY=if(MODE<3,1,0)
+.param CTR=1.0
+.param TF=2m
+.param TEND=if(MODE==5,14m,if(MODE<3,6m,5m))
+.param RLD=if(MODE==5,1121,779)
+.param IL0=if(MODE==5,0,0.131)
+
+* ---------- battery and input capacitors ----------
+Vin IN0 0 PWL(0 {VIN*ON} 0.2m {VIN})
+Rbat IN0 INB 0.12
+Lbat INB IN 200n
+Cinp IN 0 200u Rser=12m IC={VIN*ON}
+Cinx IN 0 24u Rser=2m IC={VIN*ON}
+
+* ---------- UVLO divider and latch ----------
+Rent IN UVLO 44.2k
+Renb UVLO 0 9.53k
+Cbyp UVLO 0 220p IC={VIN*ON*0.17737}
+QLN QPB G 0 Q3904
+QLP G QPB UVLO Q3906
+Rpb UVLO QPB 100k
+Rg G 0 10k
+Cg G 0 10n IC=0
+.model Q3904 NPN(IS=1E-14 VAF=100 BF=300 IKF=0.4 BR=4 CJC=4E-12 CJE=8E-12 RB=20 RC=0.1 RE=0.1 TR=250E-9 TF=350E-12)
+.model Q3906 PNP(IS=1E-14 VAF=100 BF=200 IKF=0.4 BR=4 CJC=5E-12 CJE=10E-12 RB=20 RC=0.1 RE=0.1 TR=250E-9 TF=450E-12)
+
+* ---------- idealized PWM, 250 kHz ----------
+Vlatch VLH 0 5
+Vclk CLK0 0 PULSE(0 1 0 5n 5n 120n 4u)
+Bclk CLK 0 V=if(V(UVLO)>1.45,V(CLK0),0)
+Vdmax DMX 0 PULSE(0 1 3.72u 5n 5n 260n 4u)
+Vramp RAMP 0 PULSE(0 46m 0 3.98u 10n 0 4u)
+Bvth VTH 0 V=min(max(V(COMP_PIN)/7-0.17,0),0.1)
+Sset Q VLH CLK 0 SWL
+Brst RST 0 V=if((((V(CS_PIN)+V(RAMP)>V(VTH))|(V(CS_PIN)>0.1))&(V(CLK)<0.5))|(V(DMX)>0.5)|(V(UVLO)<1.45),1,0)
+Srst Q 0 RST 0 SWL
+Cq Q 0 10p
+Rq Q 0 1G
+.model SWL SW(Ron=10 Roff=1G Vt=0.5 Vh=-0.1)
+Bdrv GDRV 0 V=if(V(Q)>2.5,6.75,0)
+Rdrv GDRV GD1 2
+Rgate GD1 GATE 3.3
+
+* ---------- COMP pin ----------
+Vpu VPU 0 6.8
+Rpullup VPU COMP_PIN 5.11k
+Iea 0 COMP_PIN 150u
+Ccomp_pin COMP_PIN 0 100p IC={1.6*ON}
+Dcl_hi COMP_PIN CLHI DCL
+Vcl_hi CLHI 0 2.5
+Dcl_lo CLLO COMP_PIN DCL
+Vcl_lo CLLO 0 1.1
+.model DCL D(Is=1e-14 N=1)
+
+* ---------- two DA2034-AL transformers, primaries in parallel ----------
+L1p IN DRAIN 11u Rser=18m
+L1s 0 SP 1.1m Rser=1.75
+K1 L1p L1s 0.9874
+L2p IN DRAIN 9u Rser=18m
+L2s HVN SN 0.9m Rser=1.75
+K2 L2p L2s 0.9874
+Rcore IN DRAIN 230
+Cw1 DRAIN SP 64p
+Cw2 DRAIN SN 64p
+Cs1 SP 0 15p
+Cs2 SN HVN 15p
+
+* ---------- switch, clamp, current sense ----------
+M1 DRAIN GATE SENSE SENSE CSD19531
+.model CSD19531 VDMOS(Rg=1.3 Vto=2.7 Rd=2.5m Rs=1.5m Rb=3m Kp=150 Cgdmax=1.2n Cgdmin=15p Cgs=2.7n Cjo=1.6n Is=20p Vds=100)
+Rsnub IN SNUB 100
+Csnub IN SNUB 100n IC={-12*ON}
+Dsnub DRAIN SNUB D_SNUB
+Rsns SENSE 0 6m
+Rcs SENSE CS_PIN 200
+Ccs CS_PIN 0 470p
+
+* ---------- +HV output ----------
+Bfp FPC 0 V=if((FLT==1)&(time>TF),0,1)
+Sfp SP SPD FPC 0 SWF
+Dp SPD HVP D_ES1J
+Rsn1 SP SS1 220
+Csn1 SS1 HVP 22p
+Coutp HVP 0 30u Rser=1 IC={102.4*ON}
+Coutpx HVP 0 0.45u Rser=20m IC={102.4*ON}
+Dtvsp 0 HVP D_TVS
+Lfp HVP FP1 100u Rser=0.35 IC={IL0}
+Lbp FP1 OUTP 1u Rser=0.1 IC={IL0}
+Cfp OUTP 0 0.45u Rser=20m IC={102.3*ON}
+Cdp OUTP DPP 10u Rser=3 IC={102.3*ON}
+Rdp DPP 0 10
+Rlp OUTP 0 {RLD}
+Bsp SPC 0 V=if(((STDY==1)&(time>2.5m))|(FLT>0),1,0)
+Ssp OUTP LP SPC 0 SWF
+Rsp LP 0 2550
+
+* ---------- -HV output ----------
+Dn SN 0 D_ES1J
+Rsn2 SN SS2 220
+Csn2 SS2 0 22p
+Coutn 0 HVN 30u Rser=1 IC={102.9*ON}
+Coutnx 0 HVN 0.45u Rser=20m IC={102.9*ON}
+Dtvsn HVN 0 D_TVS
+Lfn FN1 HVN 100u Rser=0.35 IC={IL0}
+Lbn OUTN FN1 1u Rser=0.1 IC={IL0}
+Cfn 0 OUTN 0.45u Rser=20m IC={102.8*ON}
+Cdn DNN OUTN 10u Rser=3 IC={102.8*ON}
+Rdn 0 DNN 10
+Rln 0 OUTN {RLD}
+Bsn SNC 0 V=if((STDY==1)&(time>4.5m),1,0)
+Ssn 0 LN SNC 0 SWF
+Rsn LN OUTN 2550
+.model SWF SW(Ron=10m Roff=100Meg Vt=0.5 Vh=0)
+
+* ---------- main feedback block on +HV (sensed before the filter) ----------
+Bfo FOC 0 V=if((FLT==2)&(time>TF),0,1)
+Sfo COMP_PIN COLM FOC 0 SWF
+XFM HVP 0 COLM 0 KCM FBB CTR={CTR} CIC={23*ON}
+* ---------- trip blocks: collector on COMP, emitter on the latch gate ----------
+XTP HVP 0 COMP_PIN G KTP TRB CTR={CTR} FIC={2.33*ON}
+XTN 0 HVN COMP_PIN G KTN TRB CTR={CTR} FIC={2.34*ON}
+
+.subckt FBB HI LO COL EMI KC params: CTR=1 CIC=0
+Rt1 HI REF 99.6k
+Rb1 REF LO 2.49k
+XVR K1 REF LO TL431S
+Q1 KC B K1 QHV
+Rbb HI B 330k
+Dzb LO B DZ12
+Rled HI LA 44.1k
+Rsh LA KC 2k
+XO LA KC COL EMI OPTO CTR={CTR}
+Cc KC CM 68n IC={CIC}
+Rc CM REF 12.7k
+.ends FBB
+
+.subckt TRB HI LO COL EMI KC params: CTR=1 FIC=0
+Rt1 HI REF 99.6k
+Rb1 REF LO 2.32k
+Cf REF LO 4.7n IC={FIC}
+XVR K1 REF LO TL431S
+Q1 KC B K1 QHV
+Rbb HI B 330k
+Dzb LO B DZ12
+Rled HI LA 22k
+Rsh LA KC 2k
+XO LA KC COL EMI OPTO CTR={CTR}
+.ends TRB
+
+.subckt OPTO A K C E params: CTR=1
+Dled A M D_LED
+Vs M K 0
+Bs N 0 V=I(Vs)*{CTR}
+Rf N NF 1k
+Cf NF 0 3n
+Bc C E I=V(NF)*tanh(V(C,E)*8)
+Cce C E 20p
+.model D_LED D(Is=1p N=2 Rs=1 Cjo=8p)
+.ends OPTO
+
+.subckt TL431S K REF A
+Vr RI A 2.495
+Iref REF A 2u
+Bg K A I=0.05*(1+tanh(40*(V(REF)-V(RI))))*(0.5+0.5*tanh((V(K,A)-1.8)*3))
+Ck K A 20p
+Dclamp A K D_TL
+Dmin A K D_Z36
+.model D_TL D(Is=1p N=1)
+.model D_Z36 D(Is=1p N=1 BV=36 Ibv=1m)
+.ends TL431S
+
+.model QHV NPN(Is=1e-14 Bf=80 Vaf=200 Cjc=4p Cje=20p Tf=1n Rb=10)
+.model DZ12 D(Is=1p N=1 BV=12 Ibv=100u Cjo=30p)
+.model D_SNUB D(Is=10n Rs=0.1 N=1.5 Cjo=20p tt=20n BV=200)
+.model D_ES1J D(Is=5n Rs=0.25 N=2.2 Cjo=12p tt=40n BV=600)
+.model D_TVS D(Is=1p N=1 BV=150 Ibv=1m Cjo=60p)
+
+* ---------- directives ----------
+.options cshunt=1e-15 noopiter gminsteps=0 srcsteps=0
+.ic V(HVP)={ON*102.4} V(HVN)={-ON*102.9} V(OUTP)={ON*102.3} V(OUTN)={-ON*102.8} V(KCM)={ON*25.5} V(KTP)={ON*101} V(KTN)={-ON*1.5} V(COMP_PIN)={ON*1.6} V(UVLO)={VIN*ON*0.17737} V(G)=0 V(IN)={VIN*ON}
+.tran 0 {TEND}
+.save V(HVP) V(HVN) V(OUTP) V(OUTN) V(DRAIN) V(SENSE) V(COMP_PIN) V(UVLO) V(G) V(KCM) V(IN) V(SNUB) V(SP) V(SPD) V(SN) I(Lbat) Id(M1) I(L1p) I(L2p) I(Dp) I(Dn)
+
+* balanced window 1.5-2.5 ms, imbalance 3.5-4.5 ms, last millisecond
+.meas TRAN Vp_bal AVG V(HVP) FROM 1.5m TO 2.5m
+.meas TRAN Vn_bal AVG V(HVN) FROM 1.5m TO 2.5m
+.meas TRAN Op_bal AVG V(OUTP) FROM 1.5m TO 2.5m
+.meas TRAN On_bal AVG V(OUTN) FROM 1.5m TO 2.5m
+.meas TRAN Vp_imb AVG V(HVP) FROM 3.5m TO 4.5m
+.meas TRAN Vn_imb AVG V(HVN) FROM 3.5m TO 4.5m
+.meas TRAN Vp_last AVG V(HVP) FROM {TEND-1m} TO {TEND}
+.meas TRAN Vn_last AVG V(HVN) FROM {TEND-1m} TO {TEND}
+.meas TRAN Op_last AVG V(OUTP) FROM {TEND-1m} TO {TEND}
+.meas TRAN On_last AVG V(OUTN) FROM {TEND-1m} TO {TEND}
+.meas TRAN Rip_raw_p PP V(HVP) FROM {TEND-0.1m} TO {TEND}
+.meas TRAN Rip_raw_n PP V(HVN) FROM {TEND-0.1m} TO {TEND}
+.meas TRAN Rip_out_p PP V(OUTP) FROM {TEND-0.1m} TO {TEND}
+.meas TRAN Rip_out_n PP V(OUTN) FROM {TEND-0.1m} TO {TEND}
+.meas TRAN Vp_max MAX V(HVP) FROM 0.3m TO {TEND}
+.meas TRAN Vn_min MIN V(HVN) FROM 0.3m TO {TEND}
+.meas TRAN Uvlo_min MIN V(UVLO) FROM 1m TO {TEND}
+.meas TRAN G_max MAX V(G) FROM 0 TO {TEND}
+.meas TRAN T_trip WHEN V(UVLO)=1.2 FALL=1
+.meas TRAN T_100 WHEN V(HVP)=100 RISE=1
+.meas TRAN I1_pk MAX I(L1p) FROM {TEND-1m} TO {TEND}
+.meas TRAN I2_pk MAX I(L2p) FROM {TEND-1m} TO {TEND}
+.meas TRAN Im_pk MAX Id(M1) FROM {TEND-1m} TO {TEND}
+.meas TRAN Vds_max MAX V(DRAIN) FROM 0.3m TO {TEND}
+.meas TRAN Vdp_rev MAX V(HVP)-V(SPD) FROM {TEND-1m} TO {TEND}
+.meas TRAN Pin AVG V(IN)*I(Lbat) FROM {TEND-1m} TO {TEND}
+.meas TRAN Pout AVG V(OUTP)*V(OUTP)/{RLD}+V(OUTN)*V(OUTN)/{RLD}+V(OUTP)*V(OUTP)/2550+V(OUTN)*V(OUTN)/2550 FROM {TEND-1m} TO {TEND}
+.meas TRAN Eff PARAM Pout/Pin
+.meas TRAN P_m1 AVG (V(DRAIN)-V(SENSE))*Id(M1) FROM {TEND-1m} TO {TEND}
+.meas TRAN P_snub AVG (V(SNUB)-V(IN))*(V(SNUB)-V(IN))/100 FROM {TEND-1m} TO {TEND}
+.meas TRAN P_core AVG (V(IN)-V(DRAIN))*(V(IN)-V(DRAIN))/230 FROM {TEND-1m} TO {TEND}
+.meas TRAN P_rsns AVG Id(M1)*Id(M1)*6m FROM {TEND-1m} TO {TEND}
+.meas TRAN P_dp AVG (V(SPD)-V(HVP))*I(Dp) FROM {TEND-1m} TO {TEND}
+.meas TRAN P_dn AVG V(SN)*I(Dn) FROM {TEND-1m} TO {TEND}
+.meas TRAN Comp_last AVG V(COMP_PIN) FROM {TEND-1m} TO {TEND}
+.meas TRAN Kcm_last AVG V(KCM) FROM {TEND-1m} TO {TEND}
+.end
+
+
+
+
