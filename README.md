@@ -13,13 +13,14 @@ Status: Rev 1 schematic generated and checked; layout not started. Nothing has b
 |---|---|
 | `FINAL_DESIGN_FOR_LAYOUT_2026-11-15.md` | **The design**: every part, value, connection and JLCPCB number, layout notes, bench checklist |
 | `pcb/` | KiCad 10 project. `power_supply.kicad_sch` is generated; see below |
-| `pcb/lib/` | Project symbols (LM51551, DA2034-ALD) and the DA2034 footprint |
+| `pcb/lib/` | Project symbols (LM51551, DA2034-ALD, LM2940IMP-9.0) and the DA2034 footprint |
 | `SCHEMATIC_CHANGES_2026-11-14.md` | History: every change from the WEBENCH design and the evidence for it |
 | `sim_ladder/` | LTspice netlists (`*.net`), records (`*_RECORD.md`) and analysis scripts |
 | `calc/` | TI LM5155 calculator copy and its record |
+| `context/` | Background for working in parallel: project history, decision log P-1 to P-25, lessons, design rationale |
 | `JLCPCB_CHECK_2026-11-14.md`, `DA2034_DATASHEET_CHECK_2026-11-14.md` | Part availability and transformer datasheet checks |
 
-The design rationale (why each choice was made, and the decision log P-1 to P-24) is a shared Claude doc.
+The design rationale (why each choice was made, and the decision log P-1 to P-25) is exported to `context/DESIGN_RATIONALE.md`.
 
 ## Schematic workflow
 
