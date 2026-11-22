@@ -1,6 +1,6 @@
 # ±102 V supply — final parts and connections for layout
 
-Status 2026-11-16. This file consolidates decisions P-1 to P-24. It supersedes `SCHEMATIC_CHANGES_2026-11-14.md` as the list to capture from; that file keeps the history and the evidence for each value.
+Status 2026-11-16. This file consolidates decisions P-1 to P-25. It supersedes `SCHEMATIC_CHANGES_2026-11-14.md` as the list to capture from; that file keeps the history and the evidence for each value.
 The reference designators below are this file's working names; **the schematic's designators are authoritative** and section 13 maps one to the other.
 The design is verified by TI's calculator and LTspice only. Nothing here has been built.
 
@@ -18,9 +18,9 @@ Decided 2026-11-16 (P-21 to P-24):
 | 3. Battery side (P-23) | Rev 1 runs from a bench supply; battery connector, fuse, reverse-polarity and over-discharge protection deferred to Rev 2 | — |
 | 4. Transformer (P-24) | keep the DA2034-ALD; buy outside JLCPCB and hand-solder (gull-wing SMD leads) | **done 2026-11-16:** pinout and footprint from LCSC's EasyEDA data (primary starts 7–10 dotted, ends 3–6; secondary 1 dotted, 12; 2 and 11 not connected; pads 3.30 × 1.27 mm, 3.0 mm pitch, 26.92 mm between columns), in `pcb/lib/`. Still cross-check against Coilcraft's drawing before ordering |
 | 5. Spacing | follow JLCPCB's layout rules | see the note below |
-| 6. Aux rails (P-21) | off-the-shelf ±12 V regulator and a 5 V supply, which the analog board's J2 expects | select the parts and decide whether they sit on this board |
+| 6. Aux rails (P-21, P-25) | **2026-11-22:** the analog board now takes +9 V instead of +12 V; a 9 V LDO (LM2940IMP-9.0) on this board, fed from VIN, replaces the ±12 V regulator (section 3b) | 5 V supply still to choose; get the analog board's 9 V load current |
 
-**Schematic (2026-11-16):** `pcb/power_supply.kicad_sch` is generated from this file by `pcb/tools/gen_schematic.py`. KiCad ERC: 0 violations. KiCad's exported netlist matches this list pin for pin (132 parts, 298 pins, 64 nets; `pcb/tools/check_netlist.py`). Its component values match the final simulation netlist `sim_ladder/P9_final.net` on all 47 simulated elements (`pcb/tools/check_values.py`). Pinouts checked against manufacturers: LM51551 (TI), TL431 SOT-23 cathode 1 / REF 2 / anode 3 (TI; the TL432 differs, so order TL431BIDBZR), TCMT1108 (Vishay). Every pin has a net label; tidying into wires is left for review.
+**Schematic (2026-11-16):** `pcb/power_supply.kicad_sch` is generated from this file by `pcb/tools/gen_schematic.py`. KiCad ERC: 0 violations. KiCad's exported netlist matches this list pin for pin (138 parts, 310 pins, 66 nets after P-25; `pcb/tools/check_netlist.py`). Its component values match the final simulation netlist `sim_ladder/P9_final.net` on all 47 simulated elements (`pcb/tools/check_values.py`). Pinouts checked against manufacturers: LM51551 (TI), TL431 SOT-23 cathode 1 / REF 2 / anode 3 (TI; the TL432 differs, so order TL431BIDBZR), TCMT1108 (Vishay). Every pin has a net label; tidying into wires is left for review.
 
 Transformer sources seen 2026-11-16: LCSC C5354095, 12 in stock at $11.79, plus 864 from another supplier through LCSC (5–7 days, $6.44); an aggregator lists about 1,200 at Mouser (994-DA2034-ALD) and about 670 at Coilcraft direct, both undated. Coilcraft also offers free samples. Two per board.
 
@@ -76,6 +76,19 @@ Spacing note: JLCPCB's rules are manufacturing minimums (how close copper can be
 | Csnub | ceramic | 100 nF, 100 V | SNUB to VIN | not looked up |
 
 U1 pins: BIAS to VIN · VCC to Cvcc · GATE to Rgate · CS to Rcs/Ccs · COMP to Rpullup and the three optocoupler collectors · FB to GND · SS to Css · RT to Rt · UVLO/SYNC to the divider and the latch · PGND, AGND and pad to GND · PGOOD unconnected.
+
+## 3b. 9 V aux rail for the analog board (P-25)
+
+Record and calculations: `calc/AUX_9V_LDO_RECORD_2026-11-22.md`. Rated 250 mA (thermal limit about 300 mA at 12.6 V in, 50 °C). Extra battery draw at 250 mA is 6 % of the flyback's; the UVLO margin falls by 32 mV [H]. Regulates only above about 9.2 V input; set a bench supply to 10.5 V or more.
+
+| Ref | Part | Value / rating | Connects | JLCPCB |
+|---|---|---|---|---|
+| FB3 | ferrite bead | 600 Ω at 100 MHz, 1.5 A, 1206 | VIN to VIN_AUX | C16902 |
+| C36 | ceramic | 10 µF, 25 V, X7R, 1206 | VIN_AUX to GND, at U8 | C70462 |
+| U8 | LM2940IMP-9.0 | 9 V, 1 A LDO, SOT-223; pin 1 IN, 2 and tab GND, 3 OUT | IN VIN_AUX, OUT +9V_AUX | C471057, 753 in stock |
+| C37 | electrolytic, SMD | 330 µF, 25 V, 8 × 10 mm; **must not be ceramic** (LM2940 needs ESR 0.1–1 Ω) | +9V_AUX to GND, at U8 | C74593 |
+| J3 | placeholder connector | 2-pin | +9V_AUX, GND to the analog board | to be agreed (P-22) |
+| TP13 | test point | | +9V_AUX | — |
 
 ## 4. Each output rail
 
@@ -151,6 +164,8 @@ Same circuit as section 5 with the differences below and **no compensation parts
 | 1 µF 250 V 1812 | 4 |
 | ES1J, SMBJ130A, 100 µH inductor, ferrite bead, BAS21 | 2 each |
 | MMBT3906 (latch + soft start) | 2 |
+| ferrite bead C16902 (FB1, FB2, FB3) | 3 |
+| 330 µF 25 V electrolytic (C1, C37) | 2 |
 | 10 µF 25 V 1206 (input) | 8 |
 | 300 Ω 2 W 2512 (clamp) | 3 |
 
@@ -166,14 +181,15 @@ Same circuit as section 5 with the differences below and **no compensation parts
 - **Quiet nodes.** Keep the REF pins, KC nodes and LATCH_G away from SW, SEC_P and SEC_N. LATCH_G must not pick up switching noise.
 - **One ground tie.** The output return joins battery ground at one point near the supply; the channel boards return to that point.
 - **Through-hole parts.** Eight 8 × 12 mm electrolytics; the two transformers are about 30 × 25 mm and 11.4 mm tall.
-- **Test points.** +HV_RAW, −HV_RAW, +HV, −HV, SW, SNS, COMP, UVLO, LATCH_G, VCC, SS, GND.
+- **Test points.** +HV_RAW, −HV_RAW, +HV, −HV, SW, SNS, COMP, UVLO, LATCH_G, VCC, SS, GND, +9V_AUX.
+- **9 V LDO.** Give U8's tab copper (up to 1.1 W); take FB3's input from the battery side of the input capacitors, not from the switch loop, and return C36/C37 to the quiet ground near the controller.
 
 ## 10. Not in this design
 
 - Battery connector, input fuse and reverse-polarity protection (Rev 2, P-23; Rev 1 runs from a bench supply through placeholder J1).
 - Output connectors to the sixteen channel boards (to be agreed, P-22; placeholder J2).
 - Battery over-discharge protection: the lockout at 7.0 V does not provide it.
-- The ±12 V and +5 V rails for the channel boards (off-the-shelf ±12 V regulator and 5 V supply, P-21; parts not chosen).
+- The +5 V rail for the analog board (P-21; part not chosen). The ±12 V rail is no longer needed (P-25).
 - An indication to the operator that the supply has tripped.
 
 ## 10b. Open design issue: start-up current (P-20)
@@ -192,6 +208,7 @@ With no output voltage to reset the transformers, the primary current climbs pas
 6. Actual −HV level across load, and which rail sits low.
 7. Channel idle current against the 5.2 mA per rail assumed.
 8. Ripple-to-load sensitivity at 252 kHz (the analog team's A8).
+9. +9V_AUX: voltage at the analog board's real load, ripple at 252 kHz, no ringing after a load step, U8 temperature.
 
 Before ordering: re-check stock on every part (several first choices turned out to have fewer than ten), look up the standard values marked "not looked up", and get Coilcraft's approval before any use on a person.
 
@@ -227,4 +244,5 @@ The schematic's designators are the ones to use from now on (BOM, layout, bench 
 | Trip +HV | divider top · bottom · filter · TL431 · MMBTA42 · bias · Zener · LED resistors · optocoupler · LED shunt | R30–R32 · R33 · C33 · U4 · Q4 · R34–R36 · D9 · R37–R39 · U5 · R40 |
 | Trip −HV | same order | R41–R43 · R44 · C34 · U6 · Q5 · R45–R47 · D10 · R48–R50 · U7 · R51 |
 | Latch | Q2 (MMBT3904) · Q3 (MMBT3906) · Rpb · Rg · Cg | Q6 · Q7 · R52 · R53 · C35 |
-| Connectors, test points | bench input · HV output · test points | J1 · J2 · TP1–TP12 |
+| 9 V aux | bead · input capacitor · LDO · output capacitor · connector | FB3 · C36 · U8 · C37 · J3 |
+| Connectors, test points | bench input · HV output · test points | J1 · J2 · TP1–TP13 |

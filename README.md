@@ -3,6 +3,7 @@
 Power board for the 16-channel electrical vestibular stimulator: one LM51551 controller and one switch driving two
 Coilcraft DA2034-ALD transformers with primaries in parallel, giving +102.5 V regulated and a following −HV rail,
 171 mA per rail from a 9–12.6 V supply. Each rail has a latching over-voltage trip at 109.8 V.
+A 9 V LDO (250 mA) on the battery input supplies the analog board's aux rail.
 
 Status: Rev 1 schematic generated and checked; layout not started. Nothing has been built or bench-tested.
 

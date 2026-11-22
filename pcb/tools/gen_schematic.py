@@ -158,6 +158,22 @@ DA2034 = '''
  (embedded_fonts no))
 '''
 
+LM2940 = '''
+(symbol "LM2940IMP-9.0" (pin_names (offset 0.254)) (exclude_from_sim no) (in_bom yes) (on_board yes)
+ (property "Reference" "U" (at -3.81 3.175 0) (effects (font (size 1.27 1.27))))
+ (property "Value" "LM2940IMP-9.0" (at 0 3.175 0) (effects (font (size 1.27 1.27)) (justify left)))
+ (property "Footprint" "Package_TO_SOT_SMD:SOT-223-3_TabPin2" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
+ (property "Datasheet" "https://www.ti.com/lit/ds/symlink/lm2940-n.pdf" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
+ (property "Description" "1 A low-dropout regulator, fixed 9 V, SOT-223; pin 1 IN, 2 GND (and tab), 3 OUT; needs Cout >= 22 uF with ESR 0.1-1 ohm" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))
+ (symbol "LM2940IMP-9.0_0_1" (rectangle (start -5.08 1.905) (end 5.08 -5.08) (stroke (width 0.254) (type default)) (fill (type background))))
+ (symbol "LM2940IMP-9.0_1_1"
+  (pin power_in line (at -7.62 0 0) (length 2.54) (name "IN" (effects (font (size 1.27 1.27)))) (number "1" (effects (font (size 1.27 1.27)))))
+  (pin power_in line (at 0 -7.62 90) (length 2.54) (name "GND" (effects (font (size 1.27 1.27)))) (number "2" (effects (font (size 1.27 1.27)))))
+  (pin power_out line (at 7.62 0 180) (length 2.54) (name "OUT" (effects (font (size 1.27 1.27)))) (number "3" (effects (font (size 1.27 1.27)))))
+ )
+ (embedded_fonts no))
+'''
+
 DA2034_FP = '''(footprint "Coilcraft_DA2034"
  (version 20241229) (generator "gen_schematic.py") (layer "F.Cu")
  (descr "Coilcraft DA2034-AL flyback transformer, 12 gull-wing leads, 3.0 mm pitch; pad geometry from LCSC/EasyEDA footprint C5354095, cross-check against Coilcraft Doc 510-2 before ordering")
@@ -192,7 +208,7 @@ _trees = {}
 def lib_tree(lib):
     if lib not in _trees:
         if lib == NAME:
-            text = '(kicad_symbol_lib ' + LM51551 + DA2034 + ')'
+            text = '(kicad_symbol_lib ' + LM51551 + DA2034 + LM2940 + ')'
         else:
             text = open(os.path.join(KLIB, lib + '.kicad_sym'), encoding='utf-8').read()
         _trees[lib] = parse(text)[0]
@@ -408,8 +424,20 @@ R('R52', '100k', R06, 'UVLO', 'LQ_B')
 R('R53', '10k', R06, 'LATCH_G', 'GND')
 C('C35', '10nF', C06, 'LATCH_G', 'GND')
 
+block('9 V AUX RAIL FOR THE ANALOG BOARD (P-25)')
+part('FB3', 'Device:FerriteBead', '600R@100MHz', 'Inductor_SMD:L_1206_3216Metric', {'1': 'VIN', '2': 'VIN_AUX'}, 'C16902',
+     note='keeps flyback input ripple out of the LDO')
+part('#FLG03', 'power:PWR_FLAG', 'PWR_FLAG', '', {'1': 'VIN_AUX'})
+C('C36', '10uF 25V X7R', C12, 'VIN_AUX', 'GND', 'C70462')
+part('U8', NAME + ':LM2940IMP-9.0', 'LM2940IMP-9.0', 'Package_TO_SOT_SMD:SOT-223-3_TabPin2',
+     {'1': 'VIN_AUX', '2': 'GND', '3': '+9V_AUX'}, 'C471057', note='9 V, 1 A LDO; rated 250 mA here (thermal)')
+CP('C37', '330uF 25V', 'Capacitor_SMD:CP_Elec_8x10', '+9V_AUX', 'GND', 'C74593',
+   note='LM2940 needs >= 22 uF with ESR 0.1-1 ohm: electrolytic, not ceramic')
+part('J3', 'Connector_Generic:Conn_01x02', 'AUX_9V (placeholder)', 'Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical',
+     {'1': '+9V_AUX', '2': 'GND'}, note='to the analog board aux input; connector to be agreed (P-22)')
+
 block('TEST POINTS')
-for i, n in enumerate(['+HV_RAW', '-HV_RAW', '+HV', '-HV', 'SW', 'SNS', 'COMP', 'UVLO', 'LATCH_G', 'VCC', 'SS', 'GND']):
+for i, n in enumerate(['+HV_RAW', '-HV_RAW', '+HV', '-HV', 'SW', 'SNS', 'COMP', 'UVLO', 'LATCH_G', 'VCC', 'SS', 'GND', '+9V_AUX']):
     part('TP%d' % (i + 1), 'Connector:TestPoint', n, TP_FP, {'1': n})
 
 
@@ -425,7 +453,7 @@ def main():
     os.makedirs(os.path.join(PRJ, 'lib', NAME + '.pretty'), exist_ok=True)
     with open(os.path.join(PRJ, 'lib', NAME + '.kicad_sym'), 'w', encoding='utf-8', newline='\n') as f:
         f.write(ser(S('(kicad_symbol_lib (version 20251024) (generator "gen_schematic.py") (generator_version "10.0") '
-                      + LM51551 + DA2034 + ')')) + '\n')
+                      + LM51551 + DA2034 + LM2940 + ')')) + '\n')
     with open(os.path.join(PRJ, 'lib', NAME + '.pretty', 'Coilcraft_DA2034.kicad_mod'), 'w', encoding='utf-8', newline='\n') as f:
         f.write(DA2034_FP.replace('{pads}', da2034_pads()))
     with open(os.path.join(PRJ, 'sym-lib-table'), 'w', encoding='utf-8', newline='\n') as f:
