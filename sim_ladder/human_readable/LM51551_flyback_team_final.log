@@ -1,0 +1,33 @@
+LTspice 24.1.1 for Windows
+Circuit: C:\Users\kiran\OneDrive\Documents\School Stuff\elec\400 level\elec 491\stim-power-supply\sim_ladder\human_readable\LM51551_flyback_team_final.net
+Start Time: Sun Nov 22 14:19:08 2026
+Options: abstol=1e-9 vntol=1e-5 reltol=0.003 cshunt=1e-15
+solver = Normal
+Maximum thread count: 8
+tnom = 27
+temp = 27
+method = trap
+abstol = 1e-09
+reltol = 0.003
+volttol = 1e-05
+d_d1: Emission coefficient, N=0.01, too small, limited to 0.1
+dd1: Emission coefficient, N=0.01, too small, limited to 0.1
+dd1: Emission coefficient, N=0.01, too small, limited to 0.1
+Per .tran options, skipping operating point for transient analysis.
+Changing Tseed to 5e-13
+Changing Tseed to 5e-15
+Changing Tseed to 5e-12
+Changing Tseed to 5e-16
+Total elapsed time: 178.380 seconds.
+
+Simulation Failed: 
+
+Total elapsed time: 178.380 seconds.
+
+Files loaded:
+C:\Users\kiran\OneDrive\Documents\School Stuff\elec\400 level\elec 491\stim-power-supply\sim_ladder\human_readable\LM51551_flyback_team_final.net
+C:\Users\kiran\AppData\Local\LTspice\lib\cmp\standard.dio
+C:\Users\kiran\AppData\Local\LTspice\lib\cmp\standard.bjt
+C:\Users\kiran\AppData\Local\LTspice\lib\cmp\standard.mos
+C:\Users\kiran\OneDrive\Documents\School Stuff\elec\400 level\elec 491\New Power Circuit\lm5155_flyback\LM5155-Q1_TRANS.LIB
+

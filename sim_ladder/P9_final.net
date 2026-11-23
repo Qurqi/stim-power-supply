@@ -14,7 +14,7 @@
 *   Input capacitors (revised 2026-11-15): 8 x 10 uF X7R derated to 40 uF [ASSUME] + one 330 uF electrolytic at 0.25 ohm [ASSUME].
 *   Optocoupler TCMT1108: CTR parameter (1.0 = assumed minimum at 1-2 mA LED current), 3 us response [ASSUME].
 *   Controller: thresholds from the TI model (as L3); 46 mV slope ramp [calc]; error amp sourcing 150 uA [ASSUME];
-*     NO soft start is modelled, so MODE 5 is a worst-case start-up.
+*     MODE 5 is a worst-case start-up soft-start.
 *   Not modelled: filter-inductor self-capacitance, ferrite-bead loss, sense-resistor inductance, PCB parasitics, temperature, optocoupler CTR versus current.
 *
 * MODE 1: 9 V steady state.  0-2.5 ms 131 mA per rail; 2.5-4.5 ms +40 mA on +HV only; 4.5-6 ms +40 mA on both (171 mA).
@@ -23,15 +23,15 @@
 * MODE 5: start-up from zero at 9 V, battery applied over 0.2 ms, idle load 91 mA per rail, no soft start.
 * Modes 1-4 skip start-up: node voltages are preset with .ic near the operating point; the operating point is found by pseudo-transient (the IC= values on parts are unused).
 
-.param MODE=1
-.param VIN=if(MODE==2,12.6,9)
+.param MODE=5
+.param VIN=if((MODE==2) | (MODE==5),12.6,9)
 .param FLT=if(MODE==3,1,if(MODE==4,2,0))
 .param SU=if(MODE==5,1,0)
 .param ON=1-SU
 .param STDY=if(MODE<3,1,0)
 .param CTR=1.0
 .param TF=2m
-.param TEND=if(MODE==5,14m,if(MODE<3,6m,5m))
+.param TEND=if(MODE==5,90m,if(MODE<3,6m,5m))
 .param RLD=if(MODE==5,1121,779)
 .param IL0=if(MODE==5,0,0.131)
 
