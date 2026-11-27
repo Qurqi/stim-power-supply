@@ -1,0 +1,142 @@
+B12 4-channel case d_noload_long, 9 V in, 171 mA per rail, steady state (ported from sim_ladder/P9_final.net, current schematic values)
+.include models.lib
+* battery 0.12 ohm, 200 nH; F2 7.42 mohm; input caps 40 uF ceramic (derated) + 330 uF at 0.25 ohm
+Vin IN0 0 9
+Rbat IN0 INB 0.12
+Lbat INB INF 200n
+RF2 INF IN 7.42m
+Cin1 IN Cin1a 330u IC=9
+Rin1 Cin1a 0 0.25
+Cinx IN Cinxa 40u IC=9
+Rinx Cinxa 0 1m
+* UVLO and latch
+R2 IN UVLO 49.9k
+R3 UVLO 0 12.4k
+C13 UVLO 0 220p
+Q6 QPB G 0 Q3904
+Q7 G QPB UVLO Q3906
+R52 UVLO QPB 100k
+R53 G 0 10k
+C35 G 0 10n IC=0
+* idealized LM51551 PWM (thresholds from TI model, 46 mV slope, 120 ns blanking), 250 kHz
+Vlatch VLH 0 5
+Vclk CLK0 0 PULSE(0 1 0 5n 5n 120n 4u)
+Bclk CLK 0 V=(V(UVLO)>1.45)?V(CLK0):0
+Vdmax DMX 0 PULSE(0 1 3.72u 5n 5n 260n 4u)
+Vramp RAMP 0 PULSE(0 46m 0 3.98u 10n 0 4u)
+Bvth VTH 0 V=min(max(V(COMP)/7-0.17,0),0.1)
+Sset Q VLH CLK 0 SWL
+Brst RST 0 V=((((V(CS)+V(RAMP)>V(VTH))||(V(CS)>0.1))&&(V(CLK)<0.5))||(V(DMX)>0.5)||(V(UVLO)<1.45))?1:0
+Srst Q 0 RST 0 SWL
+Cq Q 0 100p
+Rq Q 0 1G
+.model SWL SW(Ron=10 Roff=1G Vt=0.5 Vh=0.1)
+Bdrv GDRV 0 V=(V(Q)>2.5)?6.75:0
+Rdrv GDRV GD1 2
+R6 GD1 GATE 3.3
+* COMP pin: R4 5.11k pull-up, error-amp source, clamps
+Bpu VPU 0 V=min(6.8,max(V(IN)-0.3,0))
+R4 VPU COMP 5.11k
+Bea 0 COMP I=(V(UVLO)>1.45)?150u:0
+Ccp COMP 0 100p IC=1.6
+Dhi COMP CLHI DCL
+Vhi CLHI 0 2.5
+Dlo CLLO COMP DCL
+Vlo CLLO 0 1.1
+* T1, T2 (DA2034-ALD, 11 uH and 9 uH, 1:10, k 0.9874), primaries in parallel
+L1p IN T1a 11u
+R1p T1a SW 18m
+L1s 0 T1b 1.1m
+R1s T1b SECP 1.75
+K1 L1p L1s 0.9874
+L2p IN T2a 9u
+R2p T2a SW 18m
+L2s HVN T2b 0.9m
+R2s T2b SECN 1.75
+K2 L2p L2s 0.9874
+Rcore IN SW 230
+Cw1 SW SECP 64p
+Cw2 SW SECN 64p
+Cs1 SECP 0 15p
+Cs2 SECN HVN 15p
+* Q2 CSD19531 (VDMOS), primary clamp D1/R11.../C16, R7 6 mohm, R8 200 + C15 2.2 nF
+M1 SW GATE SNS CSD19531
+.model CSD19531 VDMOS(Rg=1.3 Vto=2.7 Rd=2.5m Rs=1.5m Kp=150 Cgdmax=1.2n Cgdmin=15p Cgs=2.7n Cjo=1.6n Is=20p)
+Rsnub IN SNUB 100
+Csnub IN SNUB 100n IC=-12
+Dsnub SW SNUB D_SNUB
+.model D_SNUB D(Is=10n Rs=0.1 N=1.5 Cjo=20p tt=20n BV=200)
+R7 SNS 0 6m
+R8 SNS CS 200
+C15 CS 0 2.2n
+* +HV output: D2 ES1J, R12/C17 snubber, C18-C21, D3 TVS, L1, FB1, C22, C23/R13 damping, load 600 ohm (171 mA)
+D2 SECP HVP D_ES1J
+R12 SECP SS1 220
+C17 SS1 HVP 22p
+Coutp HVP Coutpa 30u IC=102.4
+Routp Coutpa 0 0.333
+Cxp HVP Cxpa 0.45u IC=102.4
+Rxp Cxpa 0 20m
+D3 0 HVP D_TVS
+Lfp HVP Lfpa 100u IC=0.0
+Rfp Lfpa FP1 0.35
+Lbp FP1 Lbpa 1u IC=0.0
+Rbp Lbpa OUTP 0.1
+Cfp OUTP Cfpa 0.45u IC=102.3
+Rfpa Cfpa 0 20m
+Cdp OUTP DPP 10u IC=102.3
+Rdpe DPP DPa 3
+R13 DPa 0 10
+Rlp OUTP 0 1e+09
+* -HV output: D4, R14/C24, C25-C28, D5, L2, FB2, C29, C30/R15, load 600 ohm
+D4 SECN 0 D_ES1J
+R14 SECN SS2 220
+C24 SS2 0 22p
+Coutn 0 Coutna 30u IC=100
+Routn Coutna HVN 0.333
+Cxn 0 Cxna 0.45u IC=100
+Rxn Cxna HVN 20m
+D5 HVN 0 D_TVS
+Lfn FN1 Lfna 100u IC=0.0
+Rfn Lfna HVN 0.35
+Lbn OUTN Lbna 1u IC=0.0
+Rbn Lbna FN1 0.1
+Cfn 0 Cfna 0.45u IC=100
+Rfna Cfna OUTN 20m
+Cdn DNN OUTN 10u IC=100
+Rdne 0 DNa 10
+R15 DNa DNN 3
+Rln 0 OUTN 1e+09
+* main feedback (sensed before the filter) and trip blocks
+XFM HVP 0 COMP 0 KCM FBB CTR=1
+R28 HVP NSSa 499k
+R29 NSSa NSS 499k
+C32 NSS 0 1.3u IC=102
+D7 KCM NSS D_BAS21
+D8 NSS HVP D_BAS21
+XTP HVP 0 COMP G KTP TRB CTR=1
+XTN 0 HVN COMP G KTN TRB CTR=1
+.ic V(HVP)=102.4 V(HVN)=-100 V(OUTP)=102.3 V(OUTN)=-100 V(KCM)=25.5 V(COMP)=1.6 V(UVLO)=1.79 V(G)=0 V(IN)=9 V(NSS)=102
+.options rshunt=1e9 method=gear reltol=2e-3 abstol=1e-9 vntol=1e-5 itl4=200
+.control
+set noaskquit
+save v(outp) v(outn) v(hvp) v(hvn) v(uvlo) v(g) v(comp) v(in) i(L1p) i(L2p) i(Lbat)
+tran 5n 200m 0 20n
+meas tran outp_avg avg v(outp) from=195m to=200m
+meas tran outn_avg avg v(outn) from=195m to=200m
+meas tran outn_60 avg v(outn) from=175m to=180m
+meas tran outp_min min v(outp) from=2m to=200m
+meas tran outp_max max v(outp) from=2m to=200m
+meas tran outn_min min v(outn) from=2m to=200m
+meas tran outn_max max v(outn) from=2m to=200m
+meas tran ripp pp v(outp) from=199m to=200m
+meas tran rippn pp v(outn) from=199m to=200m
+meas tran uvlo_min min v(uvlo) from=1m to=200m
+meas tran g_max max v(g)
+meas tran comp_avg avg v(comp) from=195m to=200m
+let pin = v(in) * i(Lbat)
+meas tran pin_avg avg pin from=195m to=200m
+linearize v(outp) v(outn)
+wrdata d_noload_long.dat v(outp) v(outn)
+.endc
+.end

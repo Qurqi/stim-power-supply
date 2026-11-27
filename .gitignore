@@ -22,3 +22,6 @@ pcb/tools/bom_actual.csv
 # Python
 __pycache__/
 *.pyc
+
+# KiCad local history
+.history/

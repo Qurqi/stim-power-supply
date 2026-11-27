@@ -1,0 +1,61 @@
+* Device models ported from sim_ladder/P9_final.net (LTspice) to ngspice syntax.
+.model Q3904 NPN(IS=1E-14 VAF=100 BF=300 IKF=0.4 BR=4 CJC=4E-12 CJE=8E-12 RB=20 RC=0.1 RE=0.1 TR=250E-9 TF=350E-12)
+.model Q3906 PNP(IS=1E-14 VAF=100 BF=200 IKF=0.4 BR=4 CJC=5E-12 CJE=10E-12 RB=20 RC=0.1 RE=0.1 TR=250E-9 TF=450E-12)
+.model QHV NPN(Is=1e-14 Bf=80 Vaf=200 Cjc=4p Cje=20p Tf=1n Rb=10)
+.model DZ12 D(Is=1p N=1 BV=12 Ibv=100u Cjo=30p)
+.model D_BAS21 D(Is=5n N=1.8 Rs=1 Cjo=2p BV=250 tt=50n)
+.model D_ES1J D(Is=5n Rs=0.25 N=2.2 Cjo=12p tt=40n BV=600)
+.model D_TVS D(Is=1p N=1 BV=150 Ibv=1m Cjo=60p)
+.model DCL D(Is=1e-14 N=1)
+
+.subckt TL431S K REF A
+Vr RI A 2.495
+Iref REF A 2u
+Bg K A I=0.05*(1+tanh(40*(V(REF)-V(RI))))*(0.5+0.5*tanh((V(K,A)-1.8)*3))
+Ck K A 20p
+Dclamp A K D_TL
+Dmin A K D_Z36
+.model D_TL D(Is=1p N=1)
+.model D_Z36 D(Is=1p N=1 BV=36 Ibv=1m)
+.ends TL431S
+
+.subckt OPTO A K C E params: CTR=1
+Dled A M D_LED
+Vs M K 0
+Bs N 0 V=I(Vs)*{CTR}
+Rf N NF 1k
+Cf NF 0 3n
+Bc C E I=V(NF)*tanh(V(C,E)*8)
+Cce C E 20p
+.model D_LED D(Is=1p N=2 Rs=1 Cjo=8p)
+.ends OPTO
+
+* main feedback block: current schematic values (R16-R18 3x33.2k, R19 2.49k, R20-R22 3x110k, D6 BZT52C12,
+* R23-R25 3x14.7k, R26 2k, U3 TCMT1108, R27 12.7k + C31 68n)
+.subckt FBB HI LO COL EMI KC params: CTR=1
+Rt1 HI REF 99.6k
+Rb1 REF LO 2.49k
+XVR K1 REF LO TL431S
+Q1 KC B K1 QHV
+Rbb HI B 330k
+Dzb LO B DZ12
+Rled HI LA 44.1k
+Rsh LA KC 2k
+XO LA KC COL EMI OPTO CTR={CTR}
+Cc KC CM 68n
+Rc CM REF 12.7k
+.ends FBB
+
+* trip block: R30-R32 3x33.2k, R33 2.32k, C33 4.7n, R34-R36 3x110k, D9, R37-R39 3x7.32k, R40 2k, U5/U7
+.subckt TRB HI LO COL EMI KC params: CTR=1
+Rt1 HI REF 99.6k
+Rb1 REF LO 2.32k
+Cf REF LO 4.7n
+XVR K1 REF LO TL431S
+Q1 KC B K1 QHV
+Rbb HI B 330k
+Dzb LO B DZ12
+Rled HI LA 21.96k
+Rsh LA KC 2k
+XO LA KC COL EMI OPTO CTR={CTR}
+.ends TRB
