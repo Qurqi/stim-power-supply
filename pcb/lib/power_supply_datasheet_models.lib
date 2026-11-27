@@ -1,0 +1,209 @@
+* power_supply_datasheet_models.lib
+* Datasheet-built SPICE models for power_supply.kicad_sch (simulation only).
+* Every value comes from the datasheet of the part JLCPCB will fit (LCSC number given),
+* read from its table or its typical-characteristics graph. Tags:
+*   [T] typical value or typical curve      [M] only a max (or min) is given, that limit is used
+*   [D] not on the datasheet: SPICE default (no effect) or a stated assumption
+* Forward curves were fitted to 4-6 points read off the typical graph; fit error is listed.
+
+* =====================================================================
+* D1  SS510C, Shandong Jingdao, LCSC C123944 (SS52C-SS520C datasheet, 2017.01)
+*   Forward: Fig.3 typical, SS510C curve, fitted 0.1-10 A (error within 7 %)       [T]
+*   Leakage: Is 10 uA, from Fig.2 typical reverse current at 25 C (4-10 uA)          [T]
+*   Capacitance: Fig.4 typical, SS56C-SS520C curve (610 pF at 0.1 V, 214 pF at 80 V) [T]
+*   Breakdown: 100 V = VRRM rating; IR 1 mA max at 100 V                            [M]
+*   Schottky: no reverse-recovery charge (TT = 0)                                  [D]
+* =====================================================================
+.subckt SS510C A K
+D1 A K D_SS510C
+.model D_SS510C D(Is=1e-5 N=1.095 Rs=0.0743 Ikf=0.0497 Cjo=627p Vj=0.548 M=0.213 Bv=100 Ibv=1m Tt=0)
+.ends SS510C
+
+* =====================================================================
+* D2, D4  ES1J-LTP, MCC, LCSC C86560 (ES1A-L thru ES1J-L, Rev. E 2015)
+*   Forward: Fig.1 typical, ES1J-LT curve, fitted 10 mA-3 A (error within 3 %)     [T]
+*   Leakage: Is limited to IR 5 uA max at 600 V                                    [M]
+*   Capacitance: Fig.5 typical (34 pF at 0.01 V, 15 pF at 4 V, 4 pF at 100 V)       [T]
+*   Recovery: Trr 35 ns max (IF 0.5 A, IR 1 A, Irr 0.25 A) -> Tt = 35n/ln(1.5) = 86 ns [M]
+*   Breakdown: 600 V = VRRM rating                                                 [M]
+* =====================================================================
+.subckt ES1J A K
+D1 A K D_ES1J
+.model D_ES1J D(Is=5e-6 N=2.94 Rs=0.178 Ikf=0.00632 Cjo=30.7p Vj=1.117 M=0.442 Tt=86n Bv=600 Ibv=5u)
+.ends ES1J
+
+* =====================================================================
+* D3, D5  SMBJ130A, Littelfuse, LCSC C224006 (SMBJ series, rev. 2025)
+*   Breakdown: VBR 144-159 V at 1 mA, no typical -> midpoint 151.5 V                [M]
+*   Clamping slope: VC 209 V at IPP 2.9 A -> (209-151.5)/2.9 = 19.8 ohm             [M]
+*   Leakage: IR 1 uA max at VR 130 V                                               [M]
+*   Capacitance: Fig.5 typical, uni-directional at VBR 151 V: 250 pF at 0 V, 49 pF at VR [T]
+*   Forward: Fig.7 typical single die, rough fit (only conducts if a rail reverses) [T]
+* =====================================================================
+.subckt SMBJ130A A K
+Df A K D_SMBJ_F
+Dbd A Y D_SMBJ_BD
+Rbd Y K 19.8
+.model D_SMBJ_F D(Is=1e-13 N=1 Rs=0.05 Cjo=250p Vj=1.051 M=0.338)
+.model D_SMBJ_BD D(Is=1e-15 N=1 Bv=151.5 Ibv=1m)
+.ends SMBJ130A
+
+* =====================================================================
+* D6, D9, D10  BZT52C12, hongjiacheng / R+O, LCSC C19077410 (BZT52C2V0-C75, Rev 2.1)
+*   Zener voltage: 12.0 V typ at IZT 5 mA (table, 11.4-12.6 V)                     [T]
+*   Dynamic impedance: about 12 ohm at 12 V, Fig.4 typical (ZZT max 25 ohm)         [T]
+*   Leakage: IR 0.1 uA max at 8 V                                                  [M]
+*   Forward: VF 0.9 V max at 10 mA, no typical curve                               [M]
+*   Capacitance: Fig.3 typical at 12 V: 50 pF at 0 V, 40 pF at 1 V                 [T]
+* =====================================================================
+.subckt BZT52C12 A K
+Df A K D_BZT_F
+Dz A Y D_BZT_Z
+Rz Y K 12
+.model D_BZT_F D(Is=1.4e-17 N=1 Rs=1 Cjo=50p Vj=1.208 M=0.371)
+.model D_BZT_Z D(Is=1e-16 N=1 Bv=11.94 Ibv=5m)
+.ends BZT52C12
+
+* =====================================================================
+* D7, D8  BAS21, hongjiacheng / R+O, LCSC C7502725 (BAS21 thru BAS21S, Rev 2.0)
+*   Forward: Fig.1 typical 25 C, fitted 10 uA-100 mA (error within 1.5 %)          [T]
+*   Capacitance: Fig.3 typical (1.2 pF at 0 V, 0.95 pF at 20 V)                    [T]
+*   Breakdown: 250 V at 100 uA (table)                                             [T]
+*   Recovery: table gives Trr 5.0 ns max, the feature list says < 50 ns (conflict);
+*             5.0 ns used -> Tt = 5n/ln(1+30/30) = 7.2 ns                          [M]
+* =====================================================================
+.subckt BAS21 A NC K
+D1 A K D_BAS21
+Rnc NC K 1G
+.model D_BAS21 D(Is=2.02e-12 N=1.076 Rs=1.859 Ikf=0.001 Cjo=1.2p Vj=0.05 M=0.039 Bv=250 Ibv=100u Tt=7.2n)
+.ends BAS21
+
+* =====================================================================
+* Q3, Q4, Q5  MMBTA42, JSCJ (Jiangsu Changjiang), LCSC C8515
+*   hFE about 170 flat 0.1-20 mA, 49 at 100 mA (typical curve, VCE 10 V)          [T]
+*   VBE 0.62 V at 1 mA, VCE 10 V (typical IC-VBE curve)                            [T]
+*   Early voltage about 100 V from the typical IC-VCE curves                       [T]
+*   VCE(sat) 85 mV to 160 mV, 1-100 mA, beta 10 (typical curve) -> Rc 0.8 ohm       [T]
+*   Cob 7.8 pF at 0.1 V to 2.1 pF at 20 V; Cib 69 pF to 37 pF (typical curves)     [T]
+*   fT peak 115 MHz at 10 mA (typical curve)                                       [T]
+*   Not on datasheet: Rb, BR, storage time -> SPICE defaults                        [D]
+* =====================================================================
+.subckt MMBTA42 C B E
+Q1 C B E Q_MMBTA42
+.model Q_MMBTA42 NPN(Is=3.45e-14 Nf=1 Bf=155 Vaf=100 Ikf=0.035 Rc=0.8 Cje=71.6p Vje=0.877 Mje=0.347 Cjc=8.5p Vjc=0.307 Mjc=0.323 Tf=1.2n)
+.ends MMBTA42
+
+* =====================================================================
+* Q1, Q7  MMBT3906 (PNP), MDD, LCSC C364311 (Rev 2024A2)
+*   hFE about 180 at 0.1-3 mA, 112 at 30 mA, 50 at 100 mA (typical curve, VCE -1 V) [T]
+*   VBE 0.664 V at 1 mA, VCE -1 V (typical IC-VBE curve)                           [T]
+*   Early voltage about 100 V from the typical static characteristic              [T]
+*   VCE(sat) 72 mV at 10 mA, 280 mV at 100 mA, beta 10 -> Rc 2.3 ohm               [T]
+*   Cib 7.5 pF at 0.1 V to 3.6 pF at 5 V; Cob 8 pF to 2.3 pF at 20 V (typical)     [T]
+*   fT peak 500 MHz at 10 mA (typical curve)                                       [T]
+*   Storage time 225 ns max (IC 10 mA, IB1=IB2 1 mA) -> Tr 350 ns                   [M]
+*   Not on datasheet: Rb, BR -> SPICE defaults                                     [D]
+* =====================================================================
+.subckt MMBT3906 C B E
+Q1 C B E Q_MMBT3906
+.model Q_MMBT3906 PNP(Is=6.9e-15 Nf=1 Bf=180 Vaf=100 Ikf=0.03 Rc=2.3 Cje=7.8p Vje=4.0 Mje=0.95 Cjc=8.4p Vjc=1.785 Mjc=0.524 Tf=0.27n Tr=350n)
+.ends MMBT3906
+
+* =====================================================================
+* Q6  MMBT3904 (NPN), JSMSEMI, LCSC C916374
+*   hFE about 130 flat 0.1-10 mA, 68 at 100 mA, 25 at 200 mA (Fig.3 typical, VCE 1 V) [T]
+*   No IC-VBE curve: Is set from Fig.5 typical VBE(sat) 0.80 V at 10 mA, beta 10     [T]
+*   VCE(sat) 80 mV at 10 mA, 300 mV at 200 mA (Fig.4 typical) -> Rc 1.1 ohm          [T]
+*   Cibo 8 pF at 0.1 V to 4 pF at 5 V; Cobo 10.9 pF to 2.1 pF at 20 V (Fig.2)        [T]
+*   fT 300 MHz min, no typical -> Tf 0.53 ns                                        [M]
+*   Storage time 200 ns max (IC 10 mA, IB1=IB2 1 mA) -> Tr 320 ns                    [M]
+*   Not on datasheet: Early voltage, Rb, BR -> SPICE defaults                        [D]
+* =====================================================================
+.subckt MMBT3904 C B E
+Q1 C B E Q_MMBT3904
+.model Q_MMBT3904 NPN(Is=3.7e-16 Nf=1 Bf=130 Ikf=0.06 Rc=1.1 Cje=8.4p Vje=0.676 Mje=0.346 Cjc=12.2p Vjc=0.445 Mjc=0.471 Tf=0.53n Tr=320n)
+.ends MMBT3904
+
+* =====================================================================
+* U3, U5, U7  TCMT1108, Vishay, LCSC C3014154 (TCMT110. series, doc 83510 rev 3.1)
+* Ports A K E C = symbol pins 1 2 3 4.
+*   LED: Fig.5 typical 25 C, fitted 0.1-50 mA (error within 0.5 %); VF 1.35 V typ at 50 mA; Cj 8 pF typ [T]
+*   CTR: 130-260 % at IF 5 mA, VCE 5 V, no typical -> midpoint 195 % (your choice)  [M]
+*        scaled with IF by Fig.12 typical normalized CTR at 25 C:
+*        0.13 @0.1 mA, 0.25 @0.2, 0.38 @0.5, 0.54 @1, 0.73 @2, 1.00 @5, 1.10 @10, 1.13 @20, 1.00 @40 mA [T]
+*   Output stage: photocurrent drives the base of a transistor, so saturation and speed
+*   depend on the collector current and load like the real part. Speed fitted to Fig.14
+*   typical phase (-45 deg at about 310 kHz with RL 100 ohm, 56 kHz with RL 1 kohm).   [T]
+*   The internal transistor gain (100) is not on the datasheet; only CTR x speed matter. [D]
+*   Coupling capacitance 0.3 pF typ, dark current ignored (100 nA max).            [T]
+* =====================================================================
+.subckt TCMT1108 A K E C params: CTR5=1.95
+Dled A M D_TCMT_LED
+Vs M K 0
+Ck A C 0.3p
+* LED current copied onto node NI (1 V per A); base photocurrent = CTR5 x [IF x normalized CTR(IF)] / internal gain,
+* tabulated as IF x NCTR(IF) so the function is continuous through zero current
+Fcp 0 NI Vs 1
+Rni NI 0 1
+Bph 0 PB I = CTR5 / 100 * pwl(V(NI), -1,0, 0,0, 1e-4,1.3e-5, 2e-4,5e-5, 5e-4,1.9e-4, 1e-3,5.4e-4, 2e-3,1.46e-3, 5e-3,5e-3, 1e-2,1.1e-2, 2e-2,2.26e-2, 4e-2,4e-2)
+Vpb PB B 0
+Rpb B E 100Meg
+Q1 C B E Q_TCMT_PT
+.model D_TCMT_LED D(Is=1.01e-15 N=1.646 Rs=0.173 Cjo=8p)
+.model Q_TCMT_PT NPN(Is=1e-14 Bf=100 Br=1 Cjc=36p Vjc=0.75 Mjc=0.33 Cje=10p Tf=3.2n)
+.ends TCMT1108
+
+* =====================================================================
+* T1, T2  Coilcraft DA2034-AL (DA203x datasheet)
+* Pin order matches the symbol power_supply:DA2034-ALD.
+*   Primary inductance 10.0 uH +/-10 % at 0 A, primaries in parallel              [T]
+*   (9.0 uH min at the 10 A peak: saturation NOT modelled)                         [M]
+*   Turns ratio 1:10 -> secondary 1.0 mH                                           [T]
+*   DCR 0.018 ohm primary (parallel), 1.75 ohm secondary: max only                 [M]
+*   Leakage 0.250 uH max (primaries parallel, secondary shorted) -> k = 0.98742      [M]
+*   Interwinding capacitance 128 pF (all primary to all secondary), split equally
+*   between the dotted ends and the undotted ends                                  [T]
+*   Not on datasheet: core loss, winding self-capacitance -> not modelled           [D]
+*   Dots: primary start (P*S) and SDOT.
+* =====================================================================
+.subckt DA2034_AL SDOT NC1 P4F P3F P2F P1F P1S P2S P3S P4S NC2 S
+Rpri P1S PI 0.018
+Lpri PI P1F 10u
+Lsec SDOT SI 1m
+Rsec SI S 1.75
+Kps Lpri Lsec 0.98742
+Cdot P1S SDOT 64p
+Cend P1F S 64p
+Rt2s P2S P1S 1u
+Rt3s P3S P1S 1u
+Rt4s P4S P1S 1u
+Rt2f P2F P1F 1u
+Rt3f P3F P1F 1u
+Rt4f P4F P1F 1u
+Rnc1 NC1 SDOT 1G
+Rnc2 NC2 SDOT 1G
+.ends DA2034_AL
+
+* =====================================================================
+* FB1-FB3  Murata BLM31PG601SN1L, LCSC C16902 (spec JENF243A-0006V-01)
+*   DC resistance 0.08 ohm typ (0.16 max)                                          [T]
+*   Impedance 600 ohm +/-25 % at 100 MHz (typical)                                 [T]
+*   No impedance-vs-frequency curve in this document: modelled as an inductor in
+*   parallel with a resistor giving 600 ohm at 100 MHz with equal parts
+*   (849 ohm, 1.35 uH). The split is an assumption; Murata's SPICE model would replace it. [D]
+* =====================================================================
+.subckt BLM31PG601SN1 P N
+Rdc P X 0.08
+Lb X N 1.35u
+Rb X N 849
+.ends BLM31PG601SN1
+
+* =====================================================================
+* Battery (simulation-only source on J1): typical 3S Li-ion pack
+*   11.1 V open-circuit (3 x 3.7 V nominal), 0.15 ohm internal resistance
+*   (no cell chosen yet: typical 18650 value, assumption)                           [D]
+* =====================================================================
+.subckt BATTERY_3S NEG POS params: VOC=11.1 RINT=0.15
+Vb VB NEG {VOC}
+Rb VB POS {RINT}
+.ends BATTERY_3S
