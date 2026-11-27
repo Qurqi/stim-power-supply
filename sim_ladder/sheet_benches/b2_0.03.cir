@@ -1,0 +1,20 @@
+B2 connection surge, source 0.03 ohm
+Vb B0 0 PWL(0 0 1u 12.6)
+Rbat B0 B1 0.03
+Lbat B1 B2 200n
+RF2 B2 VIN 7.42m
+C1 VIN C1a 330u
+R1e C1a 0 0.25
+Ccer VIN Cca 40u
+Rce Cca Lce 1m
+Lce Lce 0 2n
+C10 VIN 0 100n
+.control
+tran 0.1u 2m 0 0.1u
+let ibat=-i(Vb)
+wrdata b2_0.03.dat ibat v(vin)
+meas tran ipk max ibat
+let i2=ibat*ibat
+meas tran i2t integ i2 from=0 to=2m
+.endc
+.end

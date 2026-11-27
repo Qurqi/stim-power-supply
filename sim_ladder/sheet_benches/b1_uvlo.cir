@@ -1,0 +1,12 @@
+B1 UVLO divider
+Vin IN 0 0
+R2 IN UVLO 49.9k
+R3 UVLO 0 12.4k
+C13 UVLO 0 220p
+.control
+dc Vin 0 13 0.05
+wrdata b1.dat v(uvlo)
+meas dc von when v(uvlo)=1.5 rise=1
+meas dc voff when v(uvlo)=1.4 rise=1
+.endc
+.end

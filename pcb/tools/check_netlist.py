@@ -27,7 +27,7 @@ def main():
     nets = next(c for c in tree if isinstance(c, list) and c[0] == 'nets')
     actual = {}   # (ref, pin) -> net name
     for net in nets[1:]:
-        name = str(next(c for c in net if isinstance(c, list) and c[0] == 'name')[1]).lstrip('/')
+        name = str(next(c for c in net if isinstance(c, list) and c[0] == 'name')[1]).split('/')[-1]   # hierarchical names: /SHEET/NET -> NET
         for node in (c for c in net if isinstance(c, list) and c[0] == 'node'):
             ref = str(next(c for c in node if isinstance(c, list) and c[0] == 'ref')[1])
             pin = str(next(c for c in node if isinstance(c, list) and c[0] == 'pin')[1])

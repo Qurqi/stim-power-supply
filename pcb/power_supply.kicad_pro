@@ -280,6 +280,63 @@
         "via_diameter": 0.6,
         "via_drill": 0.3,
         "wire_width": 6
+      },
+      {
+        "bus_width": 12,
+        "clearance": 1.5,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.2,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "HV_SW",
+        "pcb_color": "rgba(220, 40, 40, 0.800)",
+        "priority": 0,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.5,
+        "tuning_profile": "",
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "wire_width": 6
+      },
+      {
+        "bus_width": 12,
+        "clearance": 0.9,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.2,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "HV",
+        "pcb_color": "rgba(230, 120, 30, 0.800)",
+        "priority": 1,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.4,
+        "tuning_profile": "",
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "wire_width": 6
+      },
+      {
+        "bus_width": 12,
+        "clearance": 0.3,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.2,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "POWER",
+        "pcb_color": "rgba(40, 110, 220, 0.800)",
+        "priority": 2,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 2.0,
+        "tuning_profile": "",
+        "via_diameter": 1.0,
+        "via_drill": 0.5,
+        "wire_width": 6
       }
     ],
     "meta": {
@@ -287,7 +344,92 @@
     },
     "net_colors": {},
     "netclass_assignments": {},
-    "netclass_patterns": []
+    "netclass_patterns": [
+      {
+        "netclass": "HV_SW",
+        "pattern": "*/SEC_P"
+      },
+      {
+        "netclass": "HV_SW",
+        "pattern": "*/SEC_N"
+      },
+      {
+        "netclass": "HV_SW",
+        "pattern": "*/SN1"
+      },
+      {
+        "netclass": "HV_SW",
+        "pattern": "*/SN2"
+      },
+      {
+        "netclass": "HV",
+        "pattern": "*/+HV"
+      },
+      {
+        "netclass": "HV",
+        "pattern": "*/-HV"
+      },
+      {
+        "netclass": "HV",
+        "pattern": "*/+HV_RAW"
+      },
+      {
+        "netclass": "HV",
+        "pattern": "*/-HV_RAW"
+      },
+      {
+        "netclass": "HV",
+        "pattern": "*HVP_*"
+      },
+      {
+        "netclass": "HV",
+        "pattern": "*HVN_*"
+      },
+      {
+        "netclass": "HV",
+        "pattern": "*_T_?"
+      },
+      {
+        "netclass": "HV",
+        "pattern": "*_RB_?"
+      },
+      {
+        "netclass": "HV",
+        "pattern": "*_RL_?"
+      },
+      {
+        "netclass": "HV",
+        "pattern": "*NSS*"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "*/VIN"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "*/VBAT_IN"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "*/PGND"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "*/SW"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "*/SNS"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "*/SNUB"
+      },
+      {
+        "netclass": "POWER",
+        "pattern": "*/BATT_OUT"
+      }
+    ]
   },
   "pcbnew": {
     "last_paths": {
@@ -438,13 +580,57 @@
         "uuid": "6f0d1c2a-1b2c-4d3e-9f10-2a3b4c5d6e7f"
       }
     ],
-    "used_designators": "",
+    "used_designators": "#FLG4-5,C14,C38-49,J4,Q8,R5,R54-56,U9",
     "variants": []
   },
   "sheets": [
     [
       "6f0d1c2a-1b2c-4d3e-9f10-2a3b4c5d6e7f",
       "power_supply"
+    ],
+    [
+      "8c41e89d-1c03-4883-aa5a-b7ce337e7233",
+      "INPUT AND CONTROLLER"
+    ],
+    [
+      "572e770d-1d9d-4259-a851-0ab528642991",
+      "POWER STAGE"
+    ],
+    [
+      "a69e4b41-c4d9-4d94-a67b-3d16006c378d",
+      "LATCH"
+    ],
+    [
+      "4e8c2837-aa97-4c7e-849c-53df4579b861",
+      "BATTERY OUTPUT (VIN)"
+    ],
+    [
+      "f7d7a4a2-88d4-4d7c-aae6-bc5b1d5be91a",
+      "TEST POINTS"
+    ],
+    [
+      "615b146e-caca-4431-b7c2-8d7a584b7896",
+      "+HV OUTPUT"
+    ],
+    [
+      "5b3a3b6a-50d5-4f18-9f00-76ef6cca6564",
+      "-HV OUTPUT"
+    ],
+    [
+      "e597a41b-c7bf-4fb0-88f8-4d5183936fd6",
+      "MAIN FEEDBACK (+HV_RAW, 102.5 V)"
+    ],
+    [
+      "cd527a2c-9bb8-4bfc-9ed1-401fb202623a",
+      "TRIP +HV (109.8 V)"
+    ],
+    [
+      "7ba522ac-43b4-473d-97ae-c70758333992",
+      "TRIP -HV (109.8 V)"
+    ],
+    [
+      "80389d6f-7239-445b-8c07-005087e3271e",
+      "HV OUTPUT CONNECTOR"
     ]
   ],
   "text_variables": {},

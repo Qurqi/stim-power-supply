@@ -1,0 +1,15 @@
+B6 main feedback
+.include models.lib
+Vhv HI 0 0
+Vpu VPU 0 6.8
+R4 VPU COMP 5.11k
+XFB HI 0 COMP 0 KC FBB CTR=1
+.control
+dc Vhv 90 106 0.02
+let iled=-i(Vhv)
+wrdata b6.dat v(comp) v(kc) @r.xfb.rled[i]
+meas dc vreg when v(comp)=2 fall=1
+meas dc vhalf when v(comp)=4 fall=1
+meas dc kc_op find v(kc) when v(comp)=1.7 fall=1
+.endc
+.end

@@ -1,0 +1,26 @@
+B5 output filter
+Vs HVP 0 AC 1
+* C18-C20 3x10u electrolytic (1 ohm each, lumped), C21 1u X7R derated
+Co HVP Coa 30u
+Roa Coa 0 0.333
+Cx HVP Cxa 0.45u
+Rxa Cxa 0 20m
+L1 HVP L1a 100u
+RL1 L1a FP1 0.35
+LB FP1 FBa 1u
+RB FBa OUTP 0.1
+C22 OUTP C22a 0.45u
+R22a C22a 0 20m
+C23 OUTP DPP 10u
+R23e DPP DPa 3
+R13 DPa 0 10
+Rload OUTP 0 600
+.control
+ac dec 50 10 10meg
+let g=db(v(outp))
+wrdata b5.dat g
+meas ac a252 find g at=252k
+meas ac pk max g
+meas ac fpk when g=0 fall=1
+.endc
+.end

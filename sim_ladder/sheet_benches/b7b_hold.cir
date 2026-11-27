@@ -1,0 +1,30 @@
+B7 trip and latch: +HV_RAW ramps through the trip level, then falls back
+.include models.lib
+Vin IN 0 PWL(0 0 0.2m 9)
+R2 IN UVLO 49.9k
+R3 UVLO 0 12.4k
+C13 UVLO 0 220p
+* latch: Q6 MMBT3904, Q7 MMBT3906, R52 100k, R53 10k, C35 10n
+Q6 QPB G 0 Q3904
+Q7 G QPB UVLO Q3906
+R52 UVLO QPB 100k
+R53 G 0 10k
+C35 G 0 10n
+* COMP pull-up
+Vpu VPU 0 6.8
+R4 VPU COMP 5.11k
+* rail: steady 102.5 V, fault ramp at 5 V/ms from 1 ms, falls once switching stops (UVLO < 1.4 V)
+Vr HV0 0 PWL(0 102.5 1m 102.5 2.5m 110 3m 110 6m 60)
+Bhv HI 0 V=V(HV0)
+XTP HI 0 COMP G KTP TRB CTR=1
+.control
+tran 1u 8m
+wrdata b7b.dat v(hi) v(g) v(uvlo) v(comp)
+meas tran v_trip find v(hi) when v(uvlo)=1.4 fall=1
+meas tran t_trip when v(uvlo)=1.4 fall=1
+meas tran pre_uvlo find v(uvlo) at=0.9m
+meas tran pre_g find v(g) at=0.9m
+meas tran uvlo_end find v(uvlo) at=8m
+meas tran g_end find v(g) at=8m
+.endc
+.end

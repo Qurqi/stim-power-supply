@@ -1,0 +1,21 @@
+B3 soft start
+.include models.lib
+Vin IN 0 PWL(0 0 0.2m 9)
+R2 IN UVLO 49.9k
+R3 UVLO 0 12.4k
+Bss 0 SS I=(V(UVLO)>1.5)?10u:0
+C12 SS 0 680n
+Rss SS 0 100Meg
+Q1 0 SS COMP Q3906
+Bpu VPU 0 V=min(6.8,max(V(IN)-0.3,0))
+R4 VPU COMP 5.11k
+Ccomp COMP 0 100p
+Dhi COMP CLHI DCL
+Vhi CLHI 0 2.5
+.control
+tran 50u 120m
+wrdata b3.dat v(ss) v(comp)
+meas tran t_lim when v(comp)=1.89 rise=1
+meas tran comp10 find v(comp) at=10m
+.endc
+.end
