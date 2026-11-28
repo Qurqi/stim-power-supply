@@ -1,5 +1,7 @@
 # 9 V aux rail for the analog board (P-25) — record
 
+> **Superseded on 26 Nov 2026 (P-27).** The 9 V LDO was removed; the channel board now takes fused battery voltage (F1, J3) and makes its own rails. Kept as a record.
+
 **Question.** Can a 9 V LDO fed from the battery supply the analog board's aux input without affecting the ±102 V supply?
 **Status.** hand calculation 2026-11-22; not simulated; bench pending.
 **Decision.** P-25: the analog-board owner dropped his +12 V input (A1212S module) and wants +9 V instead. The planned ±12 V regulator (P-21) is replaced by this 9 V LDO; the 5 V supply is still open.

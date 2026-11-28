@@ -1,5 +1,7 @@
 # Schematic changes: WEBENCH design 6 → option C (±102 V, 215 mA per rail)
 
+> **History.** This list records the changes from the WEBENCH baseline to option C (14–15 Nov 2026). The current design is [`DESIGN.md`](DESIGN.md).
+
 Status 2026-11-14. Baseline: WEBENCH design 6 (`WBDesign6.svg`, `WBBOMDesign6.csv`: +110 V, 100 mA, one transformer).
 Target: one LM51551 and one switch driving two catalogue transformers with primaries in parallel (P-6 option C),
 ±102 V (P-12), 215 mA per rail (P-4), LC filter only (P-7), a clamp on each rail.

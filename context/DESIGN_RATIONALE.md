@@ -1,5 +1,7 @@
 # ±102 V Isolated Flyback Supply: Design Rationale
 
+> **Export of 22 Nov 2026 (P-1 to P-25).** Later decisions P-26 to P-28 (isolated SGND, input fuse and battery feed, 20 kΩ bleeders) are in [`PROJECT_CONTEXT.md`](PROJECT_CONTEXT.md). The current design is [`../DESIGN.md`](../DESIGN.md).
+
 Exported 2026-11-22 from the shared design-rationale document (decision log P-1 to P-25).
 
 > **Read this as a chronological log.** Sections near the top describe early designs (+110 V, one converter per rail,

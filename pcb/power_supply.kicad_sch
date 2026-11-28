@@ -104,12 +104,6 @@
 		(uuid "ae7cf4f2-3727-4b5d-9007-2f3973db56fe")
 	)
 	(junction
-		(at 119.38 53.34)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "bda438b6-0d9e-4803-bbc4-6cad406403be")
-	)
-	(junction
 		(at 144.78 227.33)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -162,6 +156,32 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "eb1b6b3a-1e37-4045-ac0d-969987485c14")
+	)
+	(junction
+		(at 119.38 260.35)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "cb444a88-99aa-42e7-8be2-3bb82d4bfae7")
+	)
+	(wire
+		(pts
+			(xy 119.38 260.35) (xy 119.38 327.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1bd21e52-0899-4bdf-908b-ed38763b2ad9")
+	)
+	(wire
+		(pts
+			(xy 88.9 327.66) (xy 119.38 327.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "47a2c577-db67-4ff4-a41a-cfd81ed2d4f1")
 	)
 	(wire
 		(pts
@@ -422,16 +442,6 @@
 			(type default)
 		)
 		(uuid "498618d5-3146-4549-bcd4-b617eae77b54")
-	)
-	(wire
-		(pts
-			(xy 88.9 53.34) (xy 119.38 53.34)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "4c8452dc-1013-4c07-900b-62e927a41f8b")
 	)
 	(wire
 		(pts
@@ -1767,16 +1777,6 @@
 				(justify right)
 			)
 		)
-		(pin "SGND" passive
-			(at 88.9 53.34 0)
-			(uuid "0ac1e096-2e7c-4056-a138-aabef3fb1898")
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
 		(pin "COMP" passive
 			(at 88.9 58.42 0)
 			(uuid "5f0de3d5-f11b-4029-94b9-a0d584df5edf")
@@ -2105,7 +2105,7 @@
 	)
 	(sheet
 		(at 25.4 261.62)
-		(size 63.5 66.04)
+		(size 63.5 71.12)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
@@ -2131,7 +2131,7 @@
 			)
 		)
 		(property "Sheetfile" "test_points.kicad_sch"
-			(at 25.4 328.2446 0)
+			(at 25.4 333.3246 0)
 			(show_name no)
 			(do_not_autoplace no)
 			(effects
@@ -2254,6 +2254,16 @@
 		(pin "VCC" passive
 			(at 88.9 322.58 0)
 			(uuid "ce5cdea2-25a4-4672-bff1-7b9871dd8b4d")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "SGND" passive
+			(at 88.9 327.66 0)
+			(uuid "9787ec6d-b059-455e-b6b6-c684c5b883e0")
 			(effects
 				(font
 					(size 1.27 1.27)
