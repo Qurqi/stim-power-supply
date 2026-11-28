@@ -2797,17 +2797,6 @@
 		)
 		(uuid "531a860b-e048-4222-bbf0-d5405ba87d8f")
 	)
-	(hierarchical_label "PGND"
-		(shape passive)
-		(at 58.42 63.5 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "53cd643c-c50e-4ba5-be6a-5b437958b8b5")
-	)
 	(hierarchical_label "AGND"
 		(shape passive)
 		(at 377.19 92.71 0)
@@ -2862,17 +2851,6 @@
 			(justify left)
 		)
 		(uuid "60ba1bad-b367-4956-8b8b-c3b9fecd6028")
-	)
-	(hierarchical_label "SGND"
-		(shape passive)
-		(at 53.34 63.5 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "6621eb90-851e-4e1f-92f7-0f375b10b9a0")
 	)
 	(hierarchical_label "PGND"
 		(shape passive)
@@ -3388,140 +3366,6 @@
 			(project "power_supply"
 				(path "/6f0d1c2a-1b2c-4d3e-9f10-2a3b4c5d6e7f/8c41e89d-1c03-4883-aa5a-b7ce337e7233"
 					(reference "NT1")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:NetTie_2")
-		(at 55.88 63.5 0)
-		(unit 1)
-		(body_style 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board yes)
-		(in_pos_files no)
-		(dnp no)
-		(uuid "05464680-26ba-46d5-bf1c-1d31d56238af")
-		(property "Reference" "NT2"
-			(at 55.88 60.96 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "NetTie_2"
-			(at 55.88 67.31 0)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "NetTie:NetTie-2_SMD_Pad2.0mm"
-			(at 55.88 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 55.88 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Description" "Net tie, 2 pins"
-			(at 55.88 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Note" "SGND (output return) to PGND, the single ground tie of design decision P-3: place at the input ground near J1"
-			(at 55.88 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Sim.Device" "R"
-			(at 55.88 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Sim.Type" "="
-			(at 55.88 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Sim.Params" "r=1m"
-			(at 55.88 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Sim.Pins" "1=+ 2=-"
-			(at 55.88 63.5 0)
-			(hide yes)
-			(show_name no)
-			(do_not_autoplace no)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(pin "1"
-			(uuid "4d1563ca-e377-4d02-87c5-78511cb116b7")
-		)
-		(pin "2"
-			(uuid "2f4efb96-77f6-417b-a45f-41d3882dbaa3")
-		)
-		(instances
-			(project "power_supply"
-				(path "/6f0d1c2a-1b2c-4d3e-9f10-2a3b4c5d6e7f/8c41e89d-1c03-4883-aa5a-b7ce337e7233"
-					(reference "NT2")
 					(unit 1)
 				)
 			)

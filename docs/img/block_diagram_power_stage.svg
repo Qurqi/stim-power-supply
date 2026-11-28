@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1580" height="920" viewBox="0 0 1580 920" font-family="Arial, Helvetica, sans-serif">
+<defs><marker id="ar" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8 z" fill="#000"/></marker></defs>
+<rect width="1580" height="920" fill="#fff"/>
+<rect x="40" y="40" width="280" height="70" fill="#fff" stroke="#000" stroke-width="2" stroke-dasharray="8 5"/>
+<text x="50" y="62" font-size="15" font-weight="bold">BATTERY</text>
+<text x="50" y="84" font-size="12.5">3-cell lithium-ion pack</text>
+<text x="50" y="102" font-size="12.5">9 to 12.6 V (external)</text>
+<rect x="40" y="170" width="280" height="100" fill="#fffff0" stroke="#000" stroke-width="2"/>
+<text x="50" y="192" font-size="15" font-weight="bold">BATTERY OUTPUT</text>
+<text x="312" y="262" font-size="11" font-style="italic" text-anchor="end">PGND</text>
+<text x="50" y="214" font-size="12.5">Fuse F1 (500 mA, 32 V)</text>
+<text x="50" y="232" font-size="12.5">Connector J3 to the analog board</text>
+<rect x="40" y="330" width="280" height="70" fill="#fff" stroke="#000" stroke-width="2" stroke-dasharray="8 5"/>
+<text x="50" y="352" font-size="15" font-weight="bold">ANALOG POWER DISTRIBUTION</text>
+<text x="50" y="374" font-size="12.5">Board (external)</text>
+<rect x="40" y="470" width="280" height="200" fill="#fffff0" stroke="#000" stroke-width="2"/>
+<text x="50" y="492" font-size="15" font-weight="bold">INPUT AND CONTROLLER</text>
+<text x="312" y="662" font-size="11" font-style="italic" text-anchor="end">PGND / AGND</text>
+<text x="50" y="514" font-size="12.5">Input J1, fuse F2 (10 A)</text>
+<text x="50" y="532" font-size="12.5">LM51551 controller, 252 kHz</text>
+<text x="50" y="550" font-size="12.5">Input capacitors (8 × 10 µF, 330 µF)</text>
+<text x="50" y="568" font-size="12.5">UVLO: on 7.5 V, off 7.0 V</text>
+<text x="50" y="586" font-size="12.5">Soft start (680 nF)</text>
+<rect x="40" y="730" width="280" height="90" fill="#fffff0" stroke="#000" stroke-width="2"/>
+<text x="50" y="752" font-size="15" font-weight="bold">LATCH</text>
+<text x="312" y="812" font-size="11" font-style="italic" text-anchor="end">AGND</text>
+<text x="50" y="774" font-size="12.5">Holds the controller off after a trip</text>
+<text x="50" y="792" font-size="12.5">Reset by disconnecting the battery</text>
+<rect x="480" y="470" width="300" height="200" fill="#fffff0" stroke="#000" stroke-width="2"/>
+<text x="490" y="492" font-size="15" font-weight="bold">POWER STAGE</text>
+<text x="772" y="662" font-size="11" font-style="italic" text-anchor="end">crosses barrier</text>
+<text x="490" y="514" font-size="12.5">2 × DA2034-ALD transformer</text>
+<text x="490" y="532" font-size="12.5">  (1:10, primaries in parallel)</text>
+<text x="490" y="550" font-size="12.5">CSD19531Q5A switch</text>
+<text x="490" y="568" font-size="12.5">6 mΩ current-sense resistor</text>
+<text x="490" y="586" font-size="12.5">Primary clamp</text>
+<rect x="900" y="40" width="320" height="110" fill="#fffff0" stroke="#000" stroke-width="2"/>
+<text x="910" y="62" font-size="15" font-weight="bold">+HV OUTPUT</text>
+<text x="1212" y="142" font-size="11" font-style="italic" text-anchor="end">SGND</text>
+<text x="910" y="84" font-size="12.5">Rectifier (ES1J)</text>
+<text x="910" y="102" font-size="12.5">Output capacitors, LC filter, ferrite bead</text>
+<rect x="900" y="200" width="320" height="90" fill="#fffff0" stroke="#000" stroke-width="2"/>
+<text x="910" y="222" font-size="15" font-weight="bold">MAIN FEEDBACK</text>
+<text x="1212" y="282" font-size="11" font-style="italic" text-anchor="end">crosses barrier</text>
+<text x="910" y="244" font-size="12.5">TL431B reference and optocoupler</text>
+<text x="910" y="262" font-size="12.5">Regulates +HV_RAW to 102.5 V</text>
+<rect x="900" y="330" width="320" height="90" fill="#fffff0" stroke="#000" stroke-width="2"/>
+<text x="910" y="352" font-size="15" font-weight="bold">TRIP +HV (109.8 V)</text>
+<text x="1212" y="412" font-size="11" font-style="italic" text-anchor="end">crosses barrier</text>
+<text x="910" y="374" font-size="12.5">Comparator and optocoupler</text>
+<rect x="900" y="470" width="320" height="90" fill="#fffff0" stroke="#000" stroke-width="2"/>
+<text x="910" y="492" font-size="15" font-weight="bold">TRIP -HV (109.8 V)</text>
+<text x="1212" y="552" font-size="11" font-style="italic" text-anchor="end">crosses barrier</text>
+<text x="910" y="514" font-size="12.5">Comparator and optocoupler</text>
+<rect x="900" y="600" width="320" height="110" fill="#fffff0" stroke="#000" stroke-width="2"/>
+<text x="910" y="622" font-size="15" font-weight="bold">-HV OUTPUT</text>
+<text x="1212" y="702" font-size="11" font-style="italic" text-anchor="end">SGND</text>
+<text x="910" y="644" font-size="12.5">Rectifier (ES1J)</text>
+<text x="910" y="662" font-size="12.5">Output capacitors, LC filter, ferrite bead</text>
+<rect x="1330" y="200" width="210" height="110" fill="#fffff0" stroke="#000" stroke-width="2"/>
+<text x="1340" y="222" font-size="15" font-weight="bold">HV OUTPUT CONNECTOR</text>
+<text x="1532" y="302" font-size="11" font-style="italic" text-anchor="end">SGND</text>
+<text x="1340" y="244" font-size="12.5">+HV, SGND, -HV</text>
+<text x="1340" y="262" font-size="12.5">J2 (to channel ISO_GND)</text>
+<rect x="1330" y="390" width="210" height="80" fill="#fff" stroke="#000" stroke-width="2" stroke-dasharray="8 5"/>
+<text x="1340" y="412" font-size="15" font-weight="bold">CHANNEL BOARDS</text>
+<text x="1340" y="434" font-size="12.5">Analog (external)</text>
+<polyline points="320,75 360,75 360,505 320,505" fill="none" stroke="#000" stroke-width="2"/>
+<polyline points="360,75 630,75 630,470" fill="none" stroke="#000" stroke-width="2" marker-end="url(#ar)"/>
+<polyline points="360,220 320,220" fill="none" stroke="#000" stroke-width="2" marker-end="url(#ar)"/>
+<circle cx="360" cy="75" r="4" fill="#000"/>
+<circle cx="360" cy="220" r="4" fill="#000"/>
+<polyline points="360,505 320,505" fill="none" stroke="#000" stroke-width="2" marker-end="url(#ar)"/>
+<text x="372" y="92" font-size="12" text-anchor="start" font-weight="bold">VIN (9 to 12.6 V)</text>
+<polyline points="180,270 180,330" fill="none" stroke="#000" stroke-width="2" marker-end="url(#ar)"/>
+<text x="190" y="305" font-size="12" text-anchor="start">BATT_OUT (battery voltage)</text>
+<polyline points="320,540 480,540" fill="none" stroke="#000" stroke-width="2" marker-end="url(#ar)"/>
+<text x="400" y="533" font-size="12" text-anchor="middle">GATE</text>
+<polyline points="480,575 320,575" fill="none" stroke="#000" stroke-width="2" marker-end="url(#ar)"/>
+<text x="400" y="568" font-size="12" text-anchor="middle">CS (sense)</text>
+<polyline points="780,520 800,520 800,95 900,95" fill="none" stroke="#000" stroke-width="2" marker-end="url(#ar)"/>
+<text x="792" y="300" font-size="12" text-anchor="end">SEC_P</text>
+<polyline points="780,630 900,630" fill="none" stroke="#000" stroke-width="2" marker-end="url(#ar)"/>
+<text x="808" y="622" font-size="12" text-anchor="start">SEC_N</text>
+<polyline points="1220,95 1275,95 1275,230 1330,230" fill="none" stroke="#000" stroke-width="2" marker-end="url(#ar)"/>
+<text x="1226" y="88" font-size="12" text-anchor="start">+HV (+102.5 V)</text>
+<polyline points="1220,655 1300,655 1300,280 1330,280" fill="none" stroke="#000" stroke-width="2" marker-end="url(#ar)"/>
+<text x="1226" y="648" font-size="12" text-anchor="start">-HV</text>
+<polyline points="1435,310 1435,390" fill="none" stroke="#000" stroke-width="2" marker-end="url(#ar)"/>
+<polyline points="900,130 888,130" fill="none" stroke="#000" stroke-width="2"/>
+<polygon points="888,120 814,120 804,130 814,140 888,140" fill="#fff" stroke="#000" stroke-width="1.5"/>
+<text x="846.0" y="134" font-size="11" text-anchor="middle">+HV_RAW</text>
+<polyline points="900,225 888,225" fill="none" stroke="#000" stroke-width="2"/>
+<polygon points="804,215 878,215 888,225 878,235 804,235" fill="#fff" stroke="#000" stroke-width="1.5"/>
+<text x="846.0" y="229" font-size="11" text-anchor="middle">+HV_RAW</text>
+<polyline points="900,262 888,262" fill="none" stroke="#000" stroke-width="2"/>
+<polygon points="888,252 814,252 804,262 814,272 888,272" fill="#fff" stroke="#000" stroke-width="1.5"/>
+<text x="846.0" y="266" font-size="11" text-anchor="middle">COMP</text>
+<polyline points="900,350 888,350" fill="none" stroke="#000" stroke-width="2"/>
+<polygon points="804,340 878,340 888,350 878,360 804,360" fill="#fff" stroke="#000" stroke-width="1.5"/>
+<text x="846.0" y="354" font-size="11" text-anchor="middle">+HV_RAW</text>
+<polyline points="900,376 888,376" fill="none" stroke="#000" stroke-width="2"/>
+<polygon points="888,366 814,366 804,376 814,386 888,386" fill="#fff" stroke="#000" stroke-width="1.5"/>
+<text x="846.0" y="380" font-size="11" text-anchor="middle">COMP</text>
+<polyline points="900,402 888,402" fill="none" stroke="#000" stroke-width="2"/>
+<polygon points="888,392 814,392 804,402 814,412 888,412" fill="#fff" stroke="#000" stroke-width="1.5"/>
+<text x="846.0" y="406" font-size="11" text-anchor="middle">LATCH_G</text>
+<polyline points="900,490 888,490" fill="none" stroke="#000" stroke-width="2"/>
+<polygon points="804,480 878,480 888,490 878,500 804,500" fill="#fff" stroke="#000" stroke-width="1.5"/>
+<text x="846.0" y="494" font-size="11" text-anchor="middle">-HV_RAW</text>
+<polyline points="900,516 888,516" fill="none" stroke="#000" stroke-width="2"/>
+<polygon points="888,506 814,506 804,516 814,526 888,526" fill="#fff" stroke="#000" stroke-width="1.5"/>
+<text x="846.0" y="520" font-size="11" text-anchor="middle">COMP</text>
+<polyline points="900,542 888,542" fill="none" stroke="#000" stroke-width="2"/>
+<polygon points="888,532 814,532 804,542 814,552 888,552" fill="#fff" stroke="#000" stroke-width="1.5"/>
+<text x="846.0" y="546" font-size="11" text-anchor="middle">LATCH_G</text>
+<polyline points="900,680 888,680" fill="none" stroke="#000" stroke-width="2"/>
+<polygon points="888,670 814,670 804,680 814,690 888,690" fill="#fff" stroke="#000" stroke-width="1.5"/>
+<text x="846.0" y="684" font-size="11" text-anchor="middle">-HV_RAW</text>
+<polyline points="320,620 332,620" fill="none" stroke="#000" stroke-width="2"/>
+<polygon points="416,610 342,610 332,620 342,630 416,630" fill="#fff" stroke="#000" stroke-width="1.5"/>
+<text x="374.0" y="624" font-size="11" text-anchor="middle">COMP</text>
+<polyline points="320,650 332,650" fill="none" stroke="#000" stroke-width="2"/>
+<polygon points="416,640 342,640 332,650 342,660 416,660" fill="#fff" stroke="#000" stroke-width="1.5"/>
+<text x="374.0" y="654" font-size="11" text-anchor="middle">UVLO</text>
+<polyline points="320,765 332,765" fill="none" stroke="#000" stroke-width="2"/>
+<polygon points="332,755 406,755 416,765 406,775 332,775" fill="#fff" stroke="#000" stroke-width="1.5"/>
+<text x="374.0" y="769" font-size="11" text-anchor="middle">UVLO</text>
+<polyline points="320,795 332,795" fill="none" stroke="#000" stroke-width="2"/>
+<polygon points="416,785 342,785 332,795 342,805 416,805" fill="#fff" stroke="#000" stroke-width="1.5"/>
+<text x="374.0" y="799" font-size="11" text-anchor="middle">LATCH_G</text>
+<rect x="480" y="730" width="740" height="165" fill="#fff" stroke="#000" stroke-width="1.5"/>
+<text x="490" y="752" font-size="13" text-anchor="start" font-weight="bold">Legend</text>
+<polyline points="500,775 560,775" fill="none" stroke="#000" stroke-width="2" marker-end="url(#ar)"/>
+<text x="575" y="779" font-size="12" text-anchor="start">Connection between blocks; the arrow shows the direction of power or signal flow</text>
+<polygon points="500,795 540,795 550,805 540,815 500,815" fill="#fff" stroke="#000" stroke-width="1.5"/>
+<text x="575" y="809" font-size="12" text-anchor="start">Flag: connects to every flag of the same name (sensing and control signals); the point shows the direction</text>
+<rect x="500" y="826" width="50" height="18" fill="#fff" stroke="#000" stroke-width="2" stroke-dasharray="8 5"/>
+<text x="575" y="840" font-size="12" text-anchor="start">Dashed box: outside the power board</text>
+<text x="490" y="862" font-size="12" text-anchor="start">Grounds are not drawn. The italic tag gives the ground of each block: PGND / AGND primary, SGND secondary.</text>
+<text x="490" y="882" font-size="12" text-anchor="start">"crosses barrier": holds a transformer or optocoupler joining the two sides. No copper joins SGND to PGND.</text>
+</svg>

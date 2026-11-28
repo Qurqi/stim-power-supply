@@ -157,6 +157,17 @@
 		)
 		(uuid "0bd6e9ca-568b-4f8d-9468-82e6889b1d1c")
 	)
+	(hierarchical_label "SGND"
+		(shape passive)
+		(at 279.4 48.26 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "3e5ba5c1-8730-44a2-80b1-2e05ff1dbeb9")
+	)
 	(hierarchical_label "-HV"
 		(shape passive)
 		(at 96.52 48.26 270)
@@ -1186,6 +1197,83 @@
 			(project "power_supply"
 				(path "/6f0d1c2a-1b2c-4d3e-9f10-2a3b4c5d6e7f/f7d7a4a2-88d4-4d7c-aae6-bc5b1d5be91a"
 					(reference "TP12")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:TestPoint")
+		(at 279.4 48.26 0)
+		(unit 1)
+		(body_style 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(in_pos_files yes)
+		(dnp no)
+		(uuid "e866c788-09a8-41c9-bf5d-0a678e5e2781")
+		(property "Reference" "TP13"
+			(at 281.94 43.18 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "SGND"
+			(at 281.94 45.72 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "TestPoint:TestPoint_Keystone_5000-5004_Miniature"
+			(at 279.4 48.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 279.4 48.26 0)
+			(hide yes)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" ""
+			(at 279.4 48.26 0)
+			(show_name no)
+			(do_not_autoplace no)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "d287c8dd-09e0-47b6-a23f-ac184fbae026")
+		)
+		(instances
+			(project "power_supply"
+				(path "/6f0d1c2a-1b2c-4d3e-9f10-2a3b4c5d6e7f/f7d7a4a2-88d4-4d7c-aae6-bc5b1d5be91a"
+					(reference "TP13")
 					(unit 1)
 				)
 			)

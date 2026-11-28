@@ -1,5 +1,7 @@
 # ±102 V supply — final parts and connections for layout
 
+> **Superseded on 27 Nov 2026 by [`DESIGN.md`](DESIGN.md).** This file uses working names (Cin1, M1, Rsns, …) and still lists the removed 9 V LDO (§3b). Section 13 maps working names to schematic designators, but its Rsns/Rcs row is swapped: in the schematic R7 is the 6 mΩ sense resistor and R8 the 200 Ω slope resistor. Kept for its history and evidence.
+
 Status 2026-11-16. This file consolidates decisions P-1 to P-25. It supersedes `SCHEMATIC_CHANGES_2026-11-14.md` as the list to capture from; that file keeps the history and the evidence for each value.
 The reference designators below are this file's working names; **the schematic's designators are authoritative** and section 13 maps one to the other.
 The design is verified by TI's calculator and LTspice only. Nothing here has been built.
@@ -42,11 +44,11 @@ Spacing note: JLCPCB's rules are manufacturing minimums (how close copper can be
 | Efficiency at 9 V, 171 mA per rail | 86.5 %; battery current about 4.3 A | [L] |
 | Ripple after the filter | 6–7 mV peak to peak | [L] |
 | Protection | trip at 109.8 V on either rail, latched off until the battery is removed; primary current limit 16.2 A | P-13; [calc] |
-| Isolation | functional only; output return tied to battery ground at one point | P-3 |
+| Isolation | functional only; output return (SGND) isolated from battery ground (PGND) so the channel board's isolation barrier is not bypassed. Only T1, T2 and the three optocouplers cross between them | P-3, P-26 |
 
 ## 2. Nets
 
-`VIN` battery positive · `GND` battery negative, system ground and the midpoint of the two rails · `SW` switch node · `SNS` top of the sense resistor · `CS`, `COMP`, `UVLO`, `VCC`, `SS`, `RT`, `GATE` controller pins · `SNUB` primary clamp node · `SEC_P`, `SEC_N` switching ends of the two secondaries · `+HV_RAW`, `−HV_RAW` rails before the filter · `+HV`, `−HV` rails to the channel boards · `LATCH_G` latch gate.
+`VIN` battery positive · `PGND` battery negative and primary power ground · `AGND` controller ground, tied to PGND at net tie NT1 · `SGND` output return and midpoint of the two rails, isolated from PGND and AGND (P-26); goes to the channel board's ISO_GND through J2 · `SW` switch node · `SNS` top of the sense resistor · `CS`, `COMP`, `UVLO`, `VCC`, `SS`, `RT`, `GATE` controller pins · `SNUB` primary clamp node · `SEC_P`, `SEC_N` switching ends of the two secondaries · `+HV_RAW`, `−HV_RAW` rails before the filter · `+HV`, `−HV` rails to the channel boards · `LATCH_G` latch gate.
 
 ## 3. Controller and primary side
 
@@ -179,9 +181,9 @@ Same circuit as section 5 with the differences below and **no compensation parts
 - **High-voltage spacing.** Layout follows JLCPCB's rules (decided 2026-11-16). Those are manufacturing minimums; the rails are 205 V apart and the rectifier nodes ring to 390–470 V, so give SEC_P, SEC_N and the raw rails extra room where the board allows.
 - **Resistor strings.** Each three-resistor string shares about 100 V; lay them in a line so the voltage steps down along the board.
 - **Quiet nodes.** Keep the REF pins, KC nodes and LATCH_G away from SW, SEC_P and SEC_N. LATCH_G must not pick up switching noise.
-- **One ground tie.** The output return joins battery ground at one point near the supply; the channel boards return to that point.
+- **Two ground regions (P-26, 2026-11-27).** Primary: PGND pour with AGND joined at NT1 next to the controller. Secondary: SGND pour under the output, feedback and trip parts. Keep a gap between them on every copper layer, crossed only by T1, T2 and the optocouplers U3, U5, U7; no tracks, vias or pours in it. The gap is limited by the transformer: on the DA2034 footprint, secondary pin 1 is 4.73 mm pad edge to pad edge from primary pin 3, with the unconnected pin 2 between them (same for pins 12, 11, 10). The channel board's barrier is 7.0 mm.
 - **Through-hole parts.** Eight 8 × 12 mm electrolytics; the two transformers are about 30 × 25 mm and 11.4 mm tall.
-- **Test points.** +HV_RAW, −HV_RAW, +HV, −HV, SW, SNS, COMP, UVLO, LATCH_G, VCC, SS, GND, +9V_AUX.
+- **Test points.** +HV_RAW, −HV_RAW, +HV, −HV, SW, SNS, COMP, UVLO, LATCH_G, VCC, SS, PGND (TP12), SGND (TP13, added 2026-11-27). Measure the HV rails against TP13, the primary nodes against TP12; a scope ground clipped to the wrong one bridges the barrier.
 - **9 V LDO.** Give U8's tab copper (up to 1.1 W); take FB3's input from the battery side of the input capacitors, not from the switch loop, and return C36/C37 to the quiet ground near the controller.
 
 ## 10. Not in this design
